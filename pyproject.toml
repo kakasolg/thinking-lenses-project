@@ -1,0 +1,12 @@
+[project]
+name = "pyproj"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "langchain-core>=0.3.65",
+    "langchain-ollama>=0.3.3",
+    "pymongo[srv]>=4.13.1",
+    "streamlit>=1.45.1",
+]
