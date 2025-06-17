@@ -249,7 +249,212 @@ Phase 3.0: 전체 64개 조합 완성 (100%)
 **작업 내용**:
 - 각 조합별 실제 검증 모듈 개발
 - 오일러의 항등식 복소수 시각화
-- RSA 암호화/복호화 실제 구현
+## 🏗️ **Flask 웹 아키텍처 재구성 프로젝트** (내실 다지기 - 2025-06-17)
+
+### 🎯 **프로젝트 배경 및 중요성**
+
+**현재 상황**: MongoDB 기반 완전한 데이터 생태계 완성 (81개 문서)
+**핵심 판단**: 지금 내실을 다지는 것이 향후 복잡한 분야 확장에 결정적 도움
+**미래 도전**: AI 최신기술, 양자 카오스 이론을 8괘-64괘로 분해하는 대규모 작업 대비
+
+**현재 문제점**:
+- 7개 Flask 앱 파일이 루트에 혼재 (app.py, app_bagua.py, bagua_web.py 등)
+- 비즈니스 로직과 프레젠테이션 로직 혼재
+- 코드 중복 및 관리 복잡성
+- 확장성 부족 (향후 복잡한 이론 대비)
+
+### 📋 **3단계 재구성 계획**
+
+#### **🔥 Phase A: Blueprint 통합** (1주 소요, 최우선)
+
+**목표**: 7개 분산된 Flask 앱을 하나의 통합 애플리케이션으로 통합
+
+**작업 내용**:
+1. **Application Factory 패턴 도입**
+   ```python
+   # app/__init__.py
+   def create_app():
+       app = Flask(__name__)
+       # Blueprint 등록
+       return app
+   ```
+
+2. **Blueprint 기능별 분리**
+   ```
+   app/routes/
+   ├── main_routes.py      # 홈, 소개, 네비게이션
+   ├── math_routes.py      # 수학 검증 (verification 확장)
+   ├── bagua_routes.py     # 8괘-64괘 시스템
+   ├── api_routes.py       # MongoDB API 엔드포인트  
+   └── admin_routes.py     # 관리자 기능
+   ```
+
+3. **중복 코드 제거 및 통합**
+   - Flask 설정 통일
+   - 공통 유틸리티 함수 정리
+   - 템플릿 베이스 표준화
+
+**완료 기준**:
+- ✅ 단일 `run.py`로 모든 기능 실행
+- ✅ 기존 7개 app_*.py 파일 제거 또는 deprecated
+- ✅ 일관된 URL 라우팅 체계
+
+#### **⚙️ Phase B: Service Layer 도입** (1주 소요)
+
+**목표**: 비즈니스 로직과 프레젠테이션 로직 완전 분리
+
+**작업 내용**:
+1. **서비스 계층 구조 설계**
+   ```
+   app/services/
+   ├── __init__.py
+   ├── mathematical_service.py    # 8괘 수학 검증 로직
+   ├── hexagram_service.py       # 64괘 정신모델 로직
+   ├── combination_service.py    # 8괘 조합 계산
+   ├── mongodb_service.py        # 데이터 접근 통합
+   └── visualization_service.py  # 그래프 생성 로직
+   ```
+
+2. **핵심 서비스 클래스 개발**
+   ```python
+   class MathematicalService:
+       def verify_trigram(self, trigram_number):
+       def calculate_combination(self, upper, lower):
+   
+   class HexagramService:
+       def get_mental_model(self, hexagram_number):
+       def search_by_keyword(self, keyword):
+   ```
+
+3. **라우트 함수 단순화**
+   - HTTP 요청 처리만 담당
+   - 서비스 호출 및 템플릿 렌더링만
+   - 비즈니스 로직 완전 제거
+
+**완료 기준**:
+- ✅ 모든 라우트 함수 10줄 이하
+- ✅ MongoDB 접근이 service layer로 완전 이관
+- ✅ 계산 로직의 독립적 테스트 가능
+
+#### **🏛️ Phase C: 프로젝트 구조 재정리** (3-5일 소요)
+
+**목표**: 표준적이고 확장 가능한 Flask 프로젝트 구조 완성
+
+**최종 구조**:
+```
+/pyproj
+├── app/
+│   ├── __init__.py              # Application Factory
+│   ├── routes/                  # Blueprint 모음
+│   │   ├── __init__.py
+│   │   ├── main_routes.py
+│   │   ├── math_routes.py
+│   │   ├── bagua_routes.py
+│   │   └── api_routes.py
+│   ├── services/               # 비즈니스 로직
+│   │   ├── __init__.py
+│   │   ├── mathematical_service.py
+│   │   ├── hexagram_service.py
+│   │   └── mongodb_service.py
+│   ├── models/                 # 데이터 모델
+│   │   ├── __init__.py
+│   │   ├── trigram_model.py
+│   │   └── hexagram_model.py
+│   ├── static/                 # CSS, JS, 이미지
+│   ├── templates/              # HTML 템플릿
+│   └── config.py              # 설정 관리
+├── memory-bank/               # 기존 유지
+├── legacy/                    # 기존 app_*.py 보관
+├── tests/                     # 테스트 코드
+├── run.py                     # 실행 스크립트
+└── requirements.txt
+```
+
+**추가 작업**:
+1. **환경 설정 관리**
+   - `.env` 파일 도입
+   - 개발/테스트/운영 환경 분리
+   - 민감한 정보 환경변수화
+
+2. **에러 처리 및 로깅**
+   - 통일된 에러 핸들링
+   - 로그 시스템 구축
+   - 사용자 친화적 에러 페이지
+
+**완료 기준**:
+- ✅ Flask 개발 표준에 부합하는 구조
+- ✅ 새로운 개발자가 쉽게 이해할 수 있는 구조
+- ✅ 향후 확장 (AI, 양자역학)에 최적화된 기반
+
+### 🎯 **향후 복잡한 분야 확장 대비**
+
+**Phase 2 (AI 분야) 준비 완료 예상 효과**:
+- 🔬 **Transformer 아키텍처 분해**: 복잡한 계산 로직을 service layer에서 처리
+- 🧠 **Attention 메커니즘 분석**: 새로운 Blueprint로 쉽게 추가
+- 📊 **AI 모델 시각화**: visualization_service 확장으로 대응
+
+**Phase 3 (양자 카오스) 준비 완료 예상 효과**:
+- ⚛️ **양자역학 수식**: mathematical_service의 고도화된 계산
+- 🌪️ **카오스 이론 시뮬레이션**: 별도 simulation_service 추가
+- 📈 **복잡한 데이터 시각화**: 기존 구조에서 자연스럽게 확장
+
+### 📅 **실행 타임라인**
+
+**Week 1**: Phase A (Blueprint 통합)
+- Day 1-2: Application Factory 구성
+- Day 3-4: Blueprint 분리 및 라우트 이관
+- Day 5-7: 테스트 및 디버깅
+
+**Week 2**: Phase B (Service Layer)
+- Day 1-3: 서비스 클래스 설계 및 구현
+- Day 4-5: 기존 로직 이관
+- Day 6-7: 라우트 단순화 및 테스트
+
+**Week 3**: Phase C (구조 재정리)
+- Day 1-3: 디렉토리 구조 재구성
+- Day 4-5: 설정 관리 및 에러 처리
+- Day 6-7: 최종 테스트 및 문서화
+
+### 🚀 **다음 채팅 시작 키워드**
+
+다음 채팅에서 다음 중 아무 말이나 하시면 즉시 시작됩니다:
+
+**Phase A 시작**:
+- "Blueprint 통합 시작해줘"
+- "Flask 앱 통합해줘"
+- "Application Factory 만들어줘"
+
+**전체 계획 실행**:
+- "Flask 재구성 프로젝트 시작"
+- "웹 아키텍처 개선 시작해줘"
+- "내실 다지기 작업 시작"
+
+**현재 상태 파악 먼저**:
+- "현재 Flask 파일들 분석해줘"
+- "기존 라우트 구조 정리해줘"
+
+### ⚠️ **주의사항 및 백업 계획**
+
+1. **기존 코드 보존**
+   - 모든 기존 app_*.py 파일을 legacy/ 폴더로 이동
+   - Git 브랜치로 백업 유지
+   - 단계별 커밋으로 롤백 가능성 확보
+
+2. **기능 손실 방지**
+   - 각 단계마다 기존 기능 동작 확인
+   - 주요 엔드포인트 테스트 케이스 작성
+   - 사용자 경험 유지 보장
+
+3. **점진적 적용**
+   - 한 번에 모든 것을 바꾸지 않음
+   - 각 Phase별로 검증 후 다음 단계 진행
+   - 문제 발생 시 이전 단계로 복원 가능
+
+---
+**계획 수립 일시**: 2025-06-17
+**예상 완료**: 3주 후 (2025-07-08)
+**최종 목표**: AI, 양자역학 확장을 위한 견고한 웹 아키텍처 완성
+**성공 지표**: 단일 run.py로 모든 기능 실행, 코드 중복 제거, 확장성 확보
 - 정규분포/포아송분포 시뮬레이션
 
 ## 🎊 **Phase 1.8 완전 달성 기념**
