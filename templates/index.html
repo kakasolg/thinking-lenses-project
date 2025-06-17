@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주역 8괘-64괘 수학적 매핑</title>
+    
+    <!-- LaTeX.css for academic styling -->
+    <link rel="stylesheet" href="https://latex.now.sh/style.css">
+    
+    <!-- KaTeX for mathematical expressions -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/contrib/auto-render.min.js"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        /* LaTeX.css 확장 스타일 */
+        body {
+            max-width: none;
+            margin: 0;
+            padding: 20px;
+            background: #fefefe;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        
+        /* 주역 괘 스타일 */
+        .trigram-symbol {
+            font-size: 2rem;
+            font-family: 'Times New Roman', serif;
+            text-align: center;
+            margin: 0.5rem 0;
+        }
+        
+        .trigram-card {
+            border: 1px solid #ddd;
+            padding: 1rem;
+            margin: 0.5rem;
+            border-radius: 4px;
+            background: #fafafa;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .trigram-card:hover {
+            background: #f0f0f0;
+            border-color: #333;
+        }
+        
+        .trigram-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        /* 64괘 그리드 */
+        .hexagram-grid {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 2px;
+            margin: 1rem 0;
+            font-size: 0.8rem;
+        }
+        
+        .hexagram-cell {
+            border: 1px solid #ccc;
+            padding: 8px 4px;
+            text-align: center;
+            cursor: pointer;
+            background: white;
+            transition: all 0.2s ease;
+        }
+        
+        .hexagram-cell:hover {
+            background: #e8e8e8;
+            border-color: #666;
+        }
+        
+        .hexagram-cell.selected {
+            background: #333;
+            color: white;
+        }
+        
+        /* 탭 네비게이션 */
+        .tab-navigation {
+            border-bottom: 2px solid #333;
+            margin: 2rem 0 1rem 0;
+        }
+        
+        .tab-button {
+            background: none;
+            border: none;
+            padding: 0.5rem 1rem;
+            margin-right: 1rem;
+            cursor: pointer;
+            font-size: 1rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s ease;
+        }
+        
+        .tab-button.active {
+            border-bottom-color: #333;
+            font-weight: bold;
+        }
+        
+        .tab-button:hover {
+            background: #f5f5f5;
+        }
+        
+        .tab-content {
+            display: none;
+            margin-top: 2rem;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* 모델 선택기 */
+        .model-selector {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .model-selector select {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 2px;
+        }
+        
+        /* 통계 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .stats-card {
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            padding: 1rem;
+            text-align: center;
+            border-radius: 4px;
+        }
+        
+        /* 대대 관계 */
+        .duality-pair {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fafafa;
+            border: 1px solid #eee;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border-radius: 4px;
+        }
+        
+        .duality-item {
+            flex: 2;
+            text-align: center;
+        }
+        
+        .duality-arrow {
+            flex: 1;
+            text-align: center;
+            font-size: 1.5rem;
+            color: #666;
+        }
+        
+        /* 검색 */
+        .search-box {
+            width: 100%;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        
+        .search-box:focus {
+            outline: none;
+            border-color: #333;
+        }
+        
+        /* 상세 정보 */
+        .hexagram-detail {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+        
+        .hexagram-detail h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        
+        /* 수학 공식 스타일 */
+        .math-formula {
+            background: #f8f8f8;
+            border-left: 4px solid #333;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Times New Roman', serif;
+        }
+        
+        /* 예시 섹션 */
+        .example-section {
+            background: #f0f8ff;
+            border: 1px solid #cce0ff;
+            border-radius: 4px;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        /* 논문 스타일 제목 */
+        .paper-header {
+            text-align: center;
+            margin: 2rem 0;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 1rem;
+        }
+        
+        .paper-title {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .paper-subtitle {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .paper-abstract {
+            background: #f8f8f8;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 1.5rem;
+            margin: 2rem 0;
+            font-style: italic;
+            line-height: 1.6;
+        }
+        
+        /* 반응형 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .hexagram-grid {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 1px;
+            }
+            
+            .hexagram-cell {
+                padding: 4px 2px;
+                font-size: 0.7rem;
+            }
+            
+            .duality-pair {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .duality-arrow {
+                transform: rotate(90deg);
+                margin: 0.5rem 0;
+            }
+            
+            .trigram-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 논문 스타일 헤더 -->
+        <header class="paper-header">
+            <h1 class="paper-title">주역 8괘-64괘 수학적 매핑 시스템</h1>
+            <p class="paper-subtitle">Mathematical Mapping of I-Ching Trigrams and Hexagrams System</p>
+            <div style="font-size: 0.9rem; color: #666;">
+                수학의 기초 개념과 동양 철학의 융합 연구
+            </div>
+        </header>
+        
+        <!-- 초록 -->
+        <div class="paper-abstract">
+            <strong>Abstract:</strong> 본 연구는 주역의 8괘-64괘 체계를 현대 수학의 기초 개념에 매핑하여 
+            동서양 지식 체계의 연결고리를 탐구한다. 두 가지 수학적 모델(추상적/구체적)을 통해 
+            64가지 수학적 조합을 체계화하고, 향후 AI 및 물리학 분야로의 확장 가능성을 제시한다.
+        </div>
+        
+        <!-- 모델 선택기 -->
+        <section class="model-selector">
+            <label for="modelSelector"><strong>수학적 모델 선택:</strong></label>
+            <select id="modelSelector">
+                <option value="abstract">추상적 모델: 자연수, 집합, 함수, 관계, 측도, 구조, 극한, 연산</option>
+                <option value="concrete">구체적 모델: π, 이진법, φ, 확률, 미분, 적분, 소수, 대칭성</option>
+            </select>
+            
+            <div class="stats-grid" style="margin-top: 1rem;">
+                <div class="stats-card">
+                    <strong>총 괘 수</strong><br>
+                    <span id="totalHexagrams">64</span>개
+                </div>
+                <div class="stats-card">
+                    <strong>수학적 커버리지</strong><br>
+                    <span id="coverage">100.0</span>%
+                </div>
+                <div class="stats-card">
+                    <strong>대대 관계</strong><br>
+                    <span id="dualityCount">4</span>쌍
+                </div>
+            </div>
+        </section>
+        
+        <!-- 탭 네비게이션 -->
+        <nav class="tab-navigation">
+            <button class="tab-button active" onclick="showTab('overview')">
+                <i class="fas fa-home"></i> 개요
+            </button>
+            <button class="tab-button" onclick="showTab('trigrams')">
+                <i class="fas fa-cubes"></i> 8괘 분석
+            </button>
+            <button class="tab-button" onclick="showTab('hexagrams')">
+                <i class="fas fa-th"></i> 64괘 매트릭스
+            </button>
+            <button class="tab-button" onclick="showTab('analysis')">
+                <i class="fas fa-chart-line"></i> 수학적 분석
+            </button>
+            <button class="tab-button" onclick="window.open('/verification', '_blank')">
+                <i class="fas fa-calculator"></i> 실시간 검증
+            </button>
+        </nav>
+        
+        <!-- 탭 내용 -->
+        
+        <!-- 개요 탭 -->
+        <div id="overview" class="tab-content active">
+            <h2>1. 연구 개요</h2>
+            
+            <h3>1.1 연구 목적</h3>
+            <p>본 연구는 다음과 같은 목적을 가진다:</p>
+            <ul>
+                <li>주역의 8괘-64괘 체계를 현대 수학에 체계적으로 매핑</li>
+                <li>동서양 지식 체계 간의 연결고리 발견</li>
+                <li>다학제적 패턴 인식 시스템 구축</li>
+                <li>AI, 물리학 등 다른 분야로의 확장 가능성 탐구</li>
+            </ul>
+            
+            <h3>1.2 방법론</h3>
+            <div class="math-formula">
+                <strong>3단계 위계구조:</strong><br>
+                Level 1: 8괘 (기초 개념) → Level 2: 64괘 (방정식/연산) → Level 3: 응용 이론
+            </div>
+            
+            <h3>1.3 두 가지 수학적 모델</h3>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 1rem 0;">
+                <div class="example-section">
+                    <h4>모델 A: 추상적 기초</h4>
+                    <p>수학의 근본적 개념들로 구성:</p>
+                    <ul style="font-size: 0.9rem;">
+                        <li>자연수 (counting)</li>
+                        <li>집합 (membership)</li>
+                        <li>함수 (transformation)</li>
+                        <li>관계 (ordering)</li>
+                        <li>측도 (measure)</li>
+                        <li>구조 (structure)</li>
+                        <li>극한 (limit)</li>
+                        <li>연산 (operation)</li>
+                    </ul>
+                </div>
+                <div class="example-section">
+                    <h4>모델 B: 구체적 대상</h4>
+                    <p>실제 수학적 대상들로 구성:</p>
+                    <ul style="font-size: 0.9rem;">
+                        <li>원주율 π (circularity)</li>
+                        <li>이진법 (discreteness)</li>
+                        <li>황금비 φ (proportion)</li>
+                        <li>확률 (uncertainty)</li>
+                        <li>미분 (rate)</li>
+                        <li>적분 (accumulation)</li>
+                        <li>소수 (primality)</li>
+                        <li>대칭성 (invariance)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <!-- 8괘 탭 -->
+        <div id="trigrams" class="tab-content">
+            <h2>2. 8괘 (팔괘) 분석</h2>
+            
+            <div id="trigramsContainer" class="trigram-grid">
+                <!-- 8괘 카드들이 여기에 동적으로 추가됩니다 -->
+            </div>
+            
+            <h3>2.1 대대(對待) 관계</h3>
+            <p>전통적인 주역에서 8괘는 4쌍의 대대 관계를 이룬다. 이를 수학적으로 해석하면:</p>
+            <div id="dualityContainer">
+                <!-- 대대 관계가 여기에 동적으로 추가됩니다 -->
+            </div>
+        </div>
+        
+        <!-- 64괘 탭 -->
+        <div id="hexagrams" class="tab-content">
+            <h2>3. 64괘 수학적 조합 매트릭스</h2>
+            
+            <p>8괘의 순서쌍으로 생성되는 64괘는 다음과 같이 8×8 매트릭스로 표현된다:</p>
+            
+            <input type="text" id="hexagramSearch" class="search-box" placeholder="🔍 수학적 의미 검색 (예: 미분, 확률, 적분...)">
+            
+            <div id="hexagramGrid" class="hexagram-grid">
+                <!-- 64괘 그리드가 여기에 동적으로 추가됩니다 -->
+            </div>
+            
+            <div id="hexagramDetail" class="hexagram-detail" style="display: none;">
+                <!-- 선택된 괘의 상세 정보가 여기에 표시됩니다 -->
+            </div>
+            
+            <div id="searchResults">
+                <!-- 검색 결과가 여기에 표시됩니다 -->
+            </div>
+        </div>
+        
+        <!-- 분석 탭 -->
+        <div id="analysis" class="tab-content">
+            <h2>4. 수학적 분석 및 결과</h2>
+            
+            <h3>4.1 모델 비교 분석</h3>
+            <div id="analysisResults" class="example-section">
+                <!-- 분석 결과가 여기에 표시됩니다 -->
+            </div>
+            
+            <h3>4.2 흥미로운 수학적 조합</h3>
+            <div id="interestingCombinations">
+                <!-- 흥미로운 조합들이 여기에 표시됩니다 -->
+            </div>
+            
+            <h3>4.3 향후 연구 방향</h3>
+            <div class="math-formula">
+                <strong>확장 계획:</strong><br>
+                1. AI 분야 역분해: Transformer → 8괘<br>
+                2. 물리학 확장: 양자역학 → 8괘<br>
+                3. 교차 검증: 영역 간 공통 패턴 발견<br>
+                4. 새로운 발견: 미지의 수학 이론 예측
+            </div>
+            
+            <h3>4.4 실시간 수학적 검증 시스템</h3>
+            <div class="example-section">
+                <p>본 시스템은 8괘의 수학적 개념을 <strong>실제 파이썬 코드로 검증</strong>하고 시각화합니다:</p>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+                    <div style="background: #e8f4fd; border: 1px solid #bee5eb; border-radius: 4px; padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">☰</div>
+                        <strong>π (원주율)</strong><br>
+                        <small>몬테카를로 시뮬레이션</small>
+                    </div>
+                    <div style="background: #fff3cd; border: 1px solid #ffeaa7; border-radius: 4px; padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">☲</div>
+                        <strong>φ (황금비)</strong><br>
+                        <small>피보나치 수열 수렴</small>
+                    </div>
+                    <div style="background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px; padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">☵</div>
+                        <strong>확률론</strong><br>
+                        <small>중심극한정리 시연</small>
+                    </div>
+                    <div style="background: #d1ecf1; border: 1px solid #bee5eb; border-radius: 4px; padding: 1rem; text-align: center;">
+                        <div style="font-size: 2rem; margin-bottom: 0.5rem;">☳☴</div>
+                        <strong>미적분학</strong><br>
+                        <small>기본정리 검증</small>
+                    </div>
+                </div>
+                
+                <div class="math-formula">
+                    <strong>주요 기능:</strong><br>
+                    • 실시간 수치 계산 및 검증<br>
+                    • 대화형 시각화 (matplotlib, seaborn, plotly)<br>
+                    • 단계별 수학적 증명 과정<br>
+                    • 오차 분석 및 정확도 평가<br>
+                    • pandas를 활용한 데이터 분석
+                </div>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                    <a href="/verification" target="_blank" class="btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; text-decoration: none; padding: 1rem 2rem; border-radius: 8px; font-size: 1.1rem; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+                        <i class="fas fa-rocket"></i> 실시간 검증 시스템 열기
+                    </a>
+                </div>
+                
+                <p style="font-size: 0.9rem; color: #666; text-align: center;">
+                    * 새 탭에서 열리며, 계산 시간은 개념당 약 5-10초입니다.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        class BaguaApp {
+            constructor() {
+                this.currentModel = 'abstract';
+                this.trigrams = [];
+                this.hexagrams = [];
+                this.selectedHexagram = null;
+                
+                this.init();
+            }
+            
+            async init() {
+                await this.loadData();
+                this.renderAll();
+                this.setupEventListeners();
+                
+                // KaTeX 자동 렌더링
+                if (window.renderMathInElement) {
+                    renderMathInElement(document.body);
+                }
+            }
+            
+            async loadData() {
+                try {
+                    const [trigramsRes, hexagramsRes, analysisRes, dualityRes] = await Promise.all([
+                        fetch(`/api/trigrams/${this.currentModel}`),
+                        fetch(`/api/hexagrams/${this.currentModel}`),
+                        fetch(`/api/analysis/${this.currentModel}`),
+                        fetch(`/api/duality/${this.currentModel}`)
+                    ]);
+                    
+                    this.trigrams = (await trigramsRes.json()).trigrams;
+                    this.hexagrams = (await hexagramsRes.json()).hexagrams;
+                    this.analysis = await analysisRes.json();
+                    this.duality = (await dualityRes.json()).duality_pairs;
+                    
+                } catch (error) {
+                    console.error('데이터 로딩 실패:', error);
+                }
+            }
+            
+            setupEventListeners() {
+                // 모델 선택기
+                document.getElementById('modelSelector').addEventListener('change', async (e) => {
+                    this.currentModel = e.target.value;
+                    await this.loadData();
+                    this.renderAll();
+                });
+                
+                // 검색 기능
+                document.getElementById('hexagramSearch').addEventListener('input', (e) => {
+                    this.searchHexagrams(e.target.value);
+                });
+            }
+            
+            renderAll() {
+                this.renderTrigrams();
+                this.renderHexagrams();
+                this.renderDuality();
+                this.renderAnalysis();
+                this.updateStats();
+            }
+            
+            renderTrigrams() {
+                const container = document.getElementById('trigramsContainer');
+                container.innerHTML = '';
+                
+                this.trigrams.forEach(trigram => {
+                    const card = document.createElement('div');
+                    card.className = 'trigram-card';
+                    card.innerHTML = `
+                        <div class="trigram-symbol">${trigram.symbol}</div>
+                        <h4 style="margin: 0.5rem 0; text-align: center;">${trigram.name}</h4>
+                        <p style="margin: 0.5rem 0; font-weight: bold; text-align: center;">${trigram.description}</p>
+                        <p style="margin: 0; font-size: 0.9rem; color: #666; text-align: center;">${trigram.concept}</p>
+                    `;
+                    container.appendChild(card);
+                });
+            }
+            
+            renderHexagrams() {
+                const grid = document.getElementById('hexagramGrid');
+                grid.innerHTML = '';
+                
+                this.hexagrams.forEach((hex) => {
+                    const cell = document.createElement('div');
+                    cell.className = 'hexagram-cell';
+                    cell.innerHTML = `
+                        <div style="font-weight: bold;">${hex.number}</div>
+                        <div style="font-size: 0.7rem;">${hex.name}</div>
+                        <div style="font-size: 0.8rem;">${hex.upper.symbol}${hex.lower.symbol}</div>
+                    `;
+                    
+                    cell.addEventListener('click', () => {
+                        this.selectHexagram(hex, cell);
+                    });
+                    
+                    grid.appendChild(cell);
+                });
+            }
+            
+            selectHexagram(hex, cellElement) {
+                // 이전 선택 해제
+                document.querySelectorAll('.hexagram-cell.selected').forEach(cell => {
+                    cell.classList.remove('selected');
+                });
+                
+                // 새로운 선택
+                cellElement.classList.add('selected');
+                this.selectedHexagram = hex;
+                
+                // 상세 정보 표시
+                const detail = document.getElementById('hexagramDetail');
+                detail.style.display = 'block';
+                detail.innerHTML = `
+                    <h3>${hex.number}. ${hex.name}</h3>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 2rem; margin: 1rem 0;">
+                        <div>
+                            <h4>괘 구성</h4>
+                            <p><strong>상괘:</strong> ${hex.upper.symbol} ${hex.upper.name}<br>
+                            <em>${hex.upper.description}</em></p>
+                            <p><strong>하괘:</strong> ${hex.lower.symbol} ${hex.lower.name}<br>
+                            <em>${hex.lower.description}</em></p>
+                        </div>
+                        <div>
+                            <h4>수학적 의미</h4>
+                            <div class="math-formula">
+                                ${hex.mathematical_meaning}
+                            </div>
+                            <h4>예시</h4>
+                            <ul>
+                                ${hex.examples.map(ex => `<li>${ex}</li>`).join('')}
+                            </ul>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            renderDuality() {
+                const container = document.getElementById('dualityContainer');
+                container.innerHTML = '';
+                
+                this.duality.forEach(pair => {
+                    const div = document.createElement('div');
+                    div.className = 'duality-pair';
+                    div.innerHTML = `
+                        <div class="duality-item">
+                            <div style="font-size: 1.5rem;">${pair.pair1.symbol}</div>
+                            <strong>${pair.pair1.name}</strong>
+                            <div style="font-size: 0.9rem; color: #666;">${pair.pair1.description}</div>
+                        </div>
+                        <div class="duality-arrow">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <div class="duality-item">
+                            <div style="font-size: 1.5rem;">${pair.pair2.symbol}</div>
+                            <strong>${pair.pair2.name}</strong>
+                            <div style="font-size: 0.9rem; color: #666;">${pair.pair2.description}</div>
+                        </div>
+                    `;
+                    container.appendChild(div);
+                });
+            }
+            
+            renderAnalysis() {
+                const container = document.getElementById('analysisResults');
+                container.innerHTML = `
+                    <div class="stats-grid">
+                        <div class="stats-card">
+                            <strong>모델 타입</strong><br>
+                            ${this.analysis.model_type === 'abstract' ? '추상적 모델' : '구체적 모델'}
+                        </div>
+                        <div class="stats-card">
+                            <strong>총 괘 수</strong><br>
+                            ${this.analysis.total_hexagrams}개
+                        </div>
+                        <div class="stats-card">
+                            <strong>수학적 커버리지</strong><br>
+                            ${this.analysis.mathematical_coverage.toFixed(1)}%
+                        </div>
+                        <div class="stats-card">
+                            <strong>대대 관계</strong><br>
+                            ${this.analysis.duality_pairs.length}쌍
+                        </div>
+                    </div>
+                `;
+                
+                // 흥미로운 조합 예시
+                const combinations = document.getElementById('interestingCombinations');
+                if (this.currentModel === 'concrete') {
+                    combinations.innerHTML = `
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem;">
+                            <div class="example-section">
+                                <h4>π + 이진법</h4>
+                                <p>디지털 신호처리에서의 FFT (Fast Fourier Transform)</p>
+                                <div class="math-formula">
+                                    연속적인 원주율과 이산적인 이진법의 조합으로 주파수 영역 변환 실현
+                                </div>
+                            </div>
+                            <div class="example-section">
+                                <h4>미분 + 적분</h4>
+                                <p>미적분학의 기본정리</p>
+                                <div class="math-formula">
+                                    순간적 변화율과 누적적 변화의 상호 보완적 관계
+                                </div>
+                            </div>
+                            <div class="example-section">
+                                <h4>소수 + 확률</h4>
+                                <p>소수 정리의 확률적 해석</p>
+                                <div class="math-formula">
+                                    리만 제타함수와 양자 카오스 이론의 연결점
+                                </div>
+                            </div>
+                            <div class="example-section">
+                                <h4>황금비 + 대칭성</h4>
+                                <p>자연의 아름다운 비례와 불변성</p>
+                                <div class="math-formula">
+                                    정다면체와 피보나치 수열에서 나타나는 기하학적 조화
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    combinations.innerHTML = `
+                        <div class="example-section">
+                            <p><em>추상적 모델의 흥미로운 조합 분석이 개발 중입니다.</em></p>
+                        </div>
+                    `;
+                }
+            }
+            
+            updateStats() {
+                document.getElementById('totalHexagrams').textContent = this.analysis.total_hexagrams;
+                document.getElementById('coverage').textContent = this.analysis.mathematical_coverage.toFixed(1);
+                document.getElementById('dualityCount').textContent = this.analysis.duality_pairs.length;
+            }
+            
+            async searchHexagrams(query) {
+                if (!query.trim()) {
+                    document.getElementById('searchResults').innerHTML = '';
+                    return;
+                }
+                
+                try {
+                    const response = await fetch(`/api/search/${this.currentModel}?q=${encodeURIComponent(query)}`);
+                    const data = await response.json();
+                    
+                    const resultsDiv = document.getElementById('searchResults');
+                    if (data.hexagrams.length === 0) {
+                        resultsDiv.innerHTML = `
+                            <div class="example-section" style="background: #fff3cd; border-color: #ffeaa7;">
+                                <strong>검색 결과:</strong> "${query}"와 관련된 괘를 찾을 수 없습니다.
+                            </div>
+                        `;
+                        return;
+                    }
+                    
+                    resultsDiv.innerHTML = `
+                        <h4>검색 결과: "${query}" (${data.hexagrams.length}개 발견)</h4>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 1rem;">
+                            ${data.hexagrams.map(hex => `
+                                <div class="hexagram-detail">
+                                    <h4>${hex.number}. ${hex.name}</h4>
+                                    <p style="font-size: 0.9rem; color: #666;">${hex.upper} + ${hex.lower}</p>
+                                    <div class="math-formula" style="font-size: 0.9rem;">
+                                        ${hex.mathematical_meaning}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
+                    
+                } catch (error) {
+                    console.error('검색 실패:', error);
+                }
+            }
+        }
+        
+        // 탭 전환 함수
+        function showTab(tabName) {
+            // 모든 탭 숨기기
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // 모든 탭 버튼 비활성화
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // 선택된 탭 표시
+            document.getElementById(tabName).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        // 앱 초기화
+        document.addEventListener('DOMContentLoaded', () => {
+            new BaguaApp();
+        });
+    </script>
+</body>
+</html>
