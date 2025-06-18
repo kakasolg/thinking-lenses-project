@@ -208,25 +208,25 @@ def register_verification_routes(app):
     routes = VerificationRoutes()
     
     # API 라우트들
-    app.add_url_rule('/api/verification/dashboard', 'verification_dashboard', 
+    app.add_url_rule('/math/api/verification/dashboard', 'verification_dashboard', 
                      routes.verification_dashboard, methods=['GET'])
-    app.add_url_rule('/api/verification/pi', 'verify_pi', 
+    app.add_url_rule('/math/api/verification/pi', 'verify_pi', 
                      routes.verify_pi, methods=['GET'])
-    app.add_url_rule('/api/verification/golden-ratio', 'verify_golden_ratio', 
+    app.add_url_rule('/math/api/verification/golden-ratio', 'verify_golden_ratio', 
                      routes.verify_golden_ratio, methods=['GET'])
-    app.add_url_rule('/api/verification/probability', 'verify_probability', 
+    app.add_url_rule('/math/api/verification/probability', 'verify_probability', 
                      routes.verify_probability, methods=['GET'])
-    app.add_url_rule('/api/verification/calculus', 'verify_calculus', 
+    app.add_url_rule('/math/api/verification/calculus', 'verify_calculus', 
                      routes.verify_calculus, methods=['GET'])
-    app.add_url_rule('/api/verification/binary', 'verify_binary', 
+    app.add_url_rule('/math/api/verification/binary', 'verify_binary', 
                      routes.verify_binary, methods=['GET'])
-    app.add_url_rule('/api/verification/primes', 'verify_primes', 
+    app.add_url_rule('/math/api/verification/primes', 'verify_primes', 
                      routes.verify_primes, methods=['GET'])
-    app.add_url_rule('/api/verification/symmetry', 'verify_symmetry', 
+    app.add_url_rule('/math/api/verification/symmetry', 'verify_symmetry', 
                      routes.verify_symmetry, methods=['GET'])
-    app.add_url_rule('/api/verification/e', 'verify_e', 
+    app.add_url_rule('/math/api/verification/e', 'verify_e', 
                      routes.verify_e, methods=['GET'])
-    app.add_url_rule('/api/verification/all', 'verify_all', 
+    app.add_url_rule('/math/api/verification/all', 'verify_all', 
                      routes.verify_all, methods=['GET'])
     
     # 페이지 라우트
