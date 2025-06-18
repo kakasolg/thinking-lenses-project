@@ -5,7 +5,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats
-from visualization.base64_encoder import save_plot_to_base64
+from ..visualization.base64_encoder import save_plot_to_base64
 
 class PrimesVerification:
     """소수 관련 수학적 검증 클래스"""

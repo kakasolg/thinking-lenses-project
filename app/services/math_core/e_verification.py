@@ -5,7 +5,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.special
-from visualization.base64_encoder import save_plot_to_base64
+from ..visualization.base64_encoder import save_plot_to_base64
 
 class EVerification:
     """자연상수 e 관련 수학적 검증 클래스"""

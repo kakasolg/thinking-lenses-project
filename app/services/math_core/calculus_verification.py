@@ -6,8 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sympy as sp
 from math import pi, e
-from utils.config import MATH_CONSTANTS, PLOT_CONFIG
-from visualization.base64_encoder import save_plot_to_base64
+from ..utils.config import MATH_CONSTANTS, PLOT_CONFIG
+from ..visualization.base64_encoder import save_plot_to_base64
 
 class CalculusVerification:
     """미적분학 검증 클래스"""

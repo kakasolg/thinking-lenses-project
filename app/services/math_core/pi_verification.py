@@ -5,8 +5,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from math import pi, atan
-from utils.config import MATH_CONSTANTS, PLOT_CONFIG
-from visualization.base64_encoder import save_plot_to_base64
+from ..utils.config import MATH_CONSTANTS, PLOT_CONFIG
+from ..visualization.base64_encoder import save_plot_to_base64
 
 class PiVerification:
     """원주율 π 검증 클래스"""

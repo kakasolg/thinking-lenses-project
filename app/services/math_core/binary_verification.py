@@ -2,15 +2,10 @@
 곤(☷): 이진법 검증 및 시각화 모듈
 """
 
-import sys
-import os
-# 프로젝트 루트 경로를 Python 경로에 추가
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats
-from visualization.base64_encoder import save_plot_to_base64
+from ..visualization.base64_encoder import save_plot_to_base64
 
 class BinaryVerification:
     """이진법 관련 수학적 검증 클래스"""
