@@ -1,50 +1,92 @@
 # 프로젝트 진행 상황
 
-## 🎊 **역사적 돌파: Phase 1.8 완전 달성!** (2025-06-17)
+## 🎊 **돌파적 발견: Flask 아키텍처 재구성 70% 완료!** (2025-06-17)
 
-### ✅ **세계 최초 주역-수학-정신모델 통합 시스템 완성**
+### ✨ **현재 상황: Blueprint 작업에서 중단된 상태**
 
-**3단계 완전 시스템**:
-- **Level 1**: 수학적 8괘 (9개 기본 개념) ✅
-- **Level 2A**: 수학적 64괘 (8개 핵심 조합) ✅ **신규**
-- **Level 2B**: 정신 모델 64괘 (찰리 멍거 격자틀) ✅
-- **Level 3**: 복합 시스템 응용 🔄 준비 완료
+**중요 발견**: 사용자가 언급한 "blueprint 작업을 하다가 멈추어서 코딩을 하다가 멈추어서" 상황 정확히 파악 완료!
 
-**MongoDB 데이터**: 총 81개 문서 (9+8+64)
+**현재 진행 상황**:
+- **Phase A (Blueprint 통합)**: ✅ **100% 완료** 
+- **Phase B (Service Layer)**: 🔄 **80% 완료**
+- **Phase C (구조 재정리)**: ❌ **0% 완료** ← **중단된 지점**
 
-## 🎉 현재 상태: **Phase 1.8 완전 달성!**
-- [x] Memory Bank 시스템 구축
+### 🏗️ **Flask 웹 아키텍처 재구성 프로젝트 현황** (2025-06-17)
 
-##### 2. 기술적 구현
-- [x] Python 개발 환경 설정 (uv 패키지 관리)
-- [x] Flask 웹 애플리케이션 프레임워크
-- [x] 시각화 라이브러리 통합 (matplotlib, plotly)
-- [x] base64 이미지 인코딩 시스템
-- [x] LaTeX.css 기반 학술적 스타일링
+#### ✅ **완료된 핵심 작업들**
 
-##### 3. **8개 수학 검증 모듈 완성** ⭐
-- [x] 🔵 **건(☰) π 검증**: NumPy, 라이프니츠, 마친공식, 몬테카를로, 월리스곱
-- [x] 🟡 **리(☲) φ 검증**: 황금비, 피보나치 수열, 연분수 전개
-- [x] 🎲 **감(☵) 확률론**: 베이즈 정리, 정규분포, 이항분포  
-- [x] 📈 **진손(☳☴) 미적분학**: 도함수, 적분, 리만 합
-- [x] 🟫 **곤(☷) 이진법**: 논리 게이트, 베르누이 시행, 이진 트리
-- [x] 🔢 **간(☶) 소수**: 에라토스테네스 체, 소수 정리, 메르센 소수
-- [x] ⚖️ **태(☱) 대칭성**: 기하학적 변환, 분자 대칭, 점군 이론
-- [x] 📈 **자연상수 e**: 급수 근사, 극한 정의, 연속 복리
+**1. Application Factory 패턴 구현 완료** ✅
+- `app/__init__.py`: create_app() 함수 완성
+- 4개 Blueprint 모두 정상 등록
+- run.py 새로운 패턴으로 업데이트 완료
 
-##### 4. 웹 인터페이스 완성
-- [x] verification.html 전용 검증 페이지 
-- [x] 8개 탭 네비게이션 시스템
-- [x] 실시간 그래프 시각화
-- [x] 인터랙티브 기능 (검색, 클릭, 탭 전환)
-- [x] 반응형 디자인 기본 적용
+**2. Blueprint 분리 100% 완료** ✅
+- `app/routes/main_routes.py` (main_bp) - 메인 페이지 라우트
+- `app/routes/math_routes.py` (math_bp) - 수학 검증 API 라우트
+- `app/routes/bagua_routes.py` (bagua_bp) - 8괘-64괘 시스템 라우트
+- `app/routes/api_routes.py` (api_bp) - LangChain Q&A API 라우트
 
-##### 5. API 및 백엔드
-- [x] Flask 엔드포인트 9개 (개별 8개 + 전체 1개)
-- [x] JSON API 응답 시스템
-- [x] 오류 처리 및 예외 관리
-- [x] 실시간 계산 및 결과 반환
+**3. 수학 모듈 클래스화 완료** ✅
+- `app/services/math_core/` 폴더에 8개 검증 모듈 분리
+- `PiVerification`, `PhiVerification`, `ProbabilityVerification` 등
+- `CalculusVerification`, `BinaryVerification`, `PrimesVerification` 등
+- `SymmetryVerification`, `EVerification` 클래스
+- `__init__.py`에서 깔끔한 import 구조
 
+**4. 서비스 레이어 기초 구축** ✅
+- `app/services/mongodb.py`: LangChain + MongoDB 통합
+- `app/services/bagua_generator.py`: 8괘-64괘 생성 로직
+- `app/services/math_verification.py`: 통합 검증 (레거시)
+
+#### 🔄 **부분 완료된 작업들**
+
+**5. 라우트-서비스 연결** 🔄 **80% 완료**
+- `math_routes.py`에서 `math_core` 클래스들 정상 import
+- 모든 수학 API 엔드포인트 작동 가능
+- 아직 기존 파일들과 중복 존재
+
+#### ❌ **미완성 작업들 (중단된 지점)**
+
+**6. 기존 Flask 파일 정리** ❌ **최우선 필요**
+- 아직 루트에 `app.py`, `app_bagua.py`, `bagua_web.py` 등 존재
+- `legacy/` 폴더로 이동 필요
+- 중복 코드 제거 및 충돌 방지 필요
+
+**7. 템플릿 및 Static 정리** ❌
+- `app/templates/` 폴더 상태 확인 필요
+- `app/static/` 폴더 구조 확인 필요
+- 기존 HTML/CSS/JS 파일들과의 호환성 검증
+
+**8. 설정 관리 시스템** ❌
+- `.env` 파일 도입 필요
+- `app/config.py` 완성 필요
+- 환경별 설정 분리 (dev/test/prod)
+
+### 🎯 **중단된 지점에서 재개 계획**
+
+#### **즉시 실행 가능한 다음 3단계** (2025-06-17)
+
+**단계 1: 기존 파일 정리** (최우선, 1-2시간 소요)
+```bash
+1. legacy/ 폴더 생성
+2. app_*.py 파일들 → legacy/ 이동
+3. run.py 정상 작동 확인
+4. 기본 라우트 테스트 (localhost:5000)
+```
+
+**단계 2: 템플릿/Static 확인** (1시간 소요)
+```bash
+1. app/templates/ 폴더 상태 확인
+2. verification.html 등 핵심 템플릿 작동 확인
+3. CSS/JS 파일 경로 수정 여부 확인
+```
+
+**단계 3: 전체 기능 테스트** (1시간 소요)
+```bash
+1. 수학 검증 API 8개 모듈 테스트
+2. 8괘-64괘 시스템 테스트
+3. MongoDB 연동 테스트
+```
 ##### 6. 🔧 기술적 문제 해결
 - [x] **리팩토링**: math_verification_web.py 52KB → 8개 모듈로 분할
 - [x] **토큰 한도 문제**: 모든 파일 300행 이하 제한 준수
