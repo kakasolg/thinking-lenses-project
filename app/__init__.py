@@ -34,6 +34,9 @@ def create_app(config=None):
     from .routes.bagua_routes import bagua_bp
     app.register_blueprint(bagua_bp)
 
+    from .routes.api_routes import api_bp
+    app.register_blueprint(api_bp)
+
     @app.route('/hello')
     def hello():
         return 'Hello, World! from App Factory'
