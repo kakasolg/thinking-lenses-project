@@ -37,16 +37,16 @@ class PhiVerification:
         ax1.plot(range(len(fib)), fib, 'bo-', markersize=6, linewidth=2)
         ax1.set_xlabel('n')
         ax1.set_ylabel('F(n)')
-        ax1.set_title('피보나치 수열 F(n)')
+        ax1.set_title('Fibonacci Sequence F(n)')
         ax1.grid(True, alpha=0.3)
         ax1.set_yscale('log')
         
         # 비율의 수렴
         ax2.plot(range(len(ratios)), ratios, 'ro-', markersize=4, linewidth=2, label='F(n+1)/F(n)')
-        ax2.axhline(y=phi_actual, color='g', linestyle='--', linewidth=2, label=f'황금비 φ = {phi_actual:.6f}')
+        ax2.axhline(y=phi_actual, color='g', linestyle='--', linewidth=2, label=f'Golden Ratio φ = {phi_actual:.6f}')
         ax2.set_xlabel('n')
-        ax2.set_ylabel('비율')
-        ax2.set_title('피보나치 수열 비율의 황금비로의 수렴')
+        ax2.set_ylabel('Ratio')
+        ax2.set_title('Convergence of Fibonacci Sequence Ratio to Golden Ratio')
         ax2.legend()
         ax2.grid(True, alpha=0.3)
         ax2.set_ylim(1.5, 1.7)
@@ -62,7 +62,7 @@ class PhiVerification:
         ax1.set_xlim(-0.5, 3)
         ax1.set_ylim(-0.5, 2)
         ax1.set_aspect('equal')
-        ax1.set_title('황금 사각형과 나선')
+        ax1.set_title('Golden Rectangle and Spiral')
         ax1.grid(True, alpha=0.3)
         
         # 황금비의 성질: φ² = φ + 1
@@ -77,7 +77,7 @@ class PhiVerification:
         ax2.axvline(x=phi_actual, color='orange', linestyle='--', linewidth=2, label=f'φ = {phi_actual:.3f}')
         ax2.set_xlabel('x')
         ax2.set_ylabel('y')
-        ax2.set_title('황금비의 성질: φ² = φ + 1')
+        ax2.set_title('Property of Golden Ratio: φ² = φ + 1')
         ax2.legend()
         ax2.grid(True, alpha=0.3)
         ax2.set_xlim(1, 2.5)

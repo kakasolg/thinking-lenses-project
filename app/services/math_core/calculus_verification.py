@@ -41,7 +41,7 @@ class CalculusVerification:
         ax1.plot(x_vals, y_prime_vals, 'r-', linewidth=2, label="f'(x) = 3x²")
         ax1.set_xlabel('x')
         ax1.set_ylabel('y')
-        ax1.set_title('함수와 그 도함수')
+        ax1.set_title('Function and its Derivative')
         ax1.legend()
         ax1.grid(True, alpha=0.3)
         
@@ -56,9 +56,9 @@ class CalculusVerification:
             errors.append(error)
         
         ax2.loglog(h_vals, errors, 'go-', linewidth=2, markersize=8)
-        ax2.set_xlabel('h (간격)')
-        ax2.set_ylabel('절대 오차')
-        ax2.set_title('수치적 미분의 오차 (x=1에서)')
+        ax2.set_xlabel('h (Interval)')
+        ax2.set_ylabel('Absolute Error')
+        ax2.set_title('Error of Numerical Differentiation (at x=1)')
         ax2.grid(True, alpha=0.3)
         
         plt.tight_layout()
@@ -97,7 +97,7 @@ class CalculusVerification:
         
         ax1.set_xlabel('x')
         ax1.set_ylabel('f(x)')
-        ax1.set_title(f'리만 합 (n={n_demo})')
+        ax1.set_title(f'Riemann Sum (n={n_demo})')
         ax1.legend()
         ax1.grid(True, alpha=0.3)
         
@@ -109,12 +109,12 @@ class CalculusVerification:
             riemann_sum = sum(x_i**2 * dx for x_i in x_points)
             riemann_sums.append(riemann_sum)
         
-        ax2.plot(n_subdivisions, riemann_sums, 'ro-', linewidth=2, markersize=8, label='리만 합')
+        ax2.plot(n_subdivisions, riemann_sums, 'ro-', linewidth=2, markersize=8, label='Riemann Sum')
         ax2.axhline(y=float(analytical_integral), color='g', linestyle='--', 
-                   linewidth=2, label=f'해석적 값 = {float(analytical_integral):.3f}')
-        ax2.set_xlabel('구간 분할 수 (n)')
-        ax2.set_ylabel('적분값')
-        ax2.set_title('리만 합의 수렴성')
+                   linewidth=2, label=f'Analytical Value = {float(analytical_integral):.3f}')
+        ax2.set_xlabel('Number of Subdivisions (n)')
+        ax2.set_ylabel('Integral Value')
+        ax2.set_title('Convergence of Riemann Sum')
         ax2.legend()
         ax2.grid(True, alpha=0.3)
         

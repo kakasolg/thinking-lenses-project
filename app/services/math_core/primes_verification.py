@@ -65,7 +65,7 @@ class PrimesVerification:
             ax1.text(col, row, str(i), ha='center', va='center', 
                     fontsize=8, color=color, weight=weight)
         
-        ax1.set_title(f'에라토스테네스의 체 (1-100)\n소수: {len(primes)}개')
+        ax1.set_title(f'Sieve of Eratosthenes (1-100)\nPrimes: {len(primes)}')
         ax1.set_xticks([])
         ax1.set_yticks([])
         
@@ -80,11 +80,11 @@ class PrimesVerification:
             # 소수 정리: π(x) ~ x/ln(x)
             theoretical_count.append(x / np.log(x))
         
-        ax2.plot(x_range, actual_count, 'bo-', label='실제 소수 개수', markersize=3)
-        ax2.plot(x_range, theoretical_count, 'r--', label='소수 정리 π(x) ~ x/ln(x)', linewidth=2)
+        ax2.plot(x_range, actual_count, 'bo-', label='Actual Prime Count', markersize=3)
+        ax2.plot(x_range, theoretical_count, 'r--', label='Prime Number Theorem π(x) ~ x/ln(x)', linewidth=2)
         ax2.set_xlabel('n')
-        ax2.set_ylabel('π(n) (n 이하 소수 개수)')
-        ax2.set_title('소수 정리 검증')
+        ax2.set_ylabel('π(n) (Number of Primes <= n)')
+        ax2.set_title('Prime Number Theorem Verification')
         ax2.legend()
         ax2.grid(True, alpha=0.3)
         
@@ -102,9 +102,9 @@ class PrimesVerification:
             exponents, values = zip(*mersenne_primes)
             ax3.bar(range(len(exponents)), np.log10(values), 
                    color='green', alpha=0.7)
-            ax3.set_xlabel('메르센 소수 지수 p')
+            ax3.set_xlabel('Mersenne Prime Exponent p')
             ax3.set_ylabel('log₁₀(2ᵖ - 1)')
-            ax3.set_title('메르센 소수 (2ᵖ - 1)')
+            ax3.set_title('Mersenne Primes (2ᵖ - 1)')
             ax3.set_xticks(range(len(exponents)))
             ax3.set_xticklabels(exponents)
             ax3.grid(True, alpha=0.3)
@@ -124,9 +124,9 @@ class PrimesVerification:
         counts = list(gap_counts.values())
         
         ax4.bar(gaps, counts, color='purple', alpha=0.7)
-        ax4.set_xlabel('소수 간격')
-        ax4.set_ylabel('빈도')
-        ax4.set_title('소수 간격 분포 (100 이하)')
+        ax4.set_xlabel('Prime Gap')
+        ax4.set_ylabel('Frequency')
+        ax4.set_title('Prime Gap Distribution (<= 100)')
         ax4.grid(True, alpha=0.3)
         
         plt.tight_layout()

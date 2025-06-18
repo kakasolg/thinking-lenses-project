@@ -44,15 +44,15 @@ class ProbabilityVerification:
             sigma = 1/sqrt(12*sample_size)  # 표본평균의 표준편차
             x = np.linspace(min(sample_means), max(sample_means), 100)
             y = scipy.stats.norm.pdf(x, mu, sigma)
-            axes[i].plot(x, y, 'r-', linewidth=2, label=f'이론적 N({mu}, {sigma:.3f}²)')
+            axes[i].plot(x, y, 'r-', linewidth=2, label=f'Theoretical N({mu}, {sigma:.3f}²)')
             
-            axes[i].set_title(f'표본 크기: {sample_size}')
-            axes[i].set_xlabel('표본평균')
-            axes[i].set_ylabel('밀도')
+            axes[i].set_title(f'Sample Size: {sample_size}')
+            axes[i].set_xlabel('Sample Mean')
+            axes[i].set_ylabel('Density')
             axes[i].legend()
             axes[i].grid(True, alpha=0.3)
         
-        plt.suptitle('중심극한정리: 표본 크기에 따른 표본평균의 분포', fontsize=14)
+        plt.suptitle('Central Limit Theorem: Distribution of Sample Means by Sample Size', fontsize=14)
         plt.tight_layout()
         plot1_base64 = save_plot_to_base64(fig)
         
@@ -70,12 +70,12 @@ class ProbabilityVerification:
         fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(15, 6))
         
         # 베이즈 정리 시각화
-        categories = ['사전확률\\n(Prior)', '우도비\\n(Likelihood)', '사후확률\\n(Posterior)']
+        categories = ['Prior Probability\\n(Prior)', 'Likelihood Ratio\\n(Likelihood)', 'Posterior Probability\\n(Posterior)']
         values = [prior, sensitivity/specificity, posterior]
         
         bars = ax1.bar(categories, values, color=['blue', 'green', 'red'], alpha=0.7)
-        ax1.set_ylabel('확률')
-        ax1.set_title('베이즈 정리: 의료진단 예시')
+        ax1.set_ylabel('Probability')
+        ax1.set_title('Bayes\' Theorem: Medical Diagnosis Example')
         ax1.grid(True, alpha=0.3)
         
         # 값 표시
@@ -89,11 +89,11 @@ class ProbabilityVerification:
         prior_dist = np.full_like(x, prior)
         posterior_dist = np.full_like(x, posterior)
         
-        ax2.axvline(x=prior, color='blue', linestyle='--', linewidth=2, label=f'사전확률 = {prior:.3f}')
-        ax2.axvline(x=posterior, color='red', linestyle='-', linewidth=2, label=f'사후확률 = {posterior:.3f}')
-        ax2.set_xlabel('확률')
-        ax2.set_ylabel('밀도')
-        ax2.set_title('검사 후 확률 변화')
+        ax2.axvline(x=prior, color='blue', linestyle='--', linewidth=2, label=f'Prior Probability = {prior:.3f}')
+        ax2.axvline(x=posterior, color='red', linestyle='-', linewidth=2, label=f'Posterior Probability = {posterior:.3f}')
+        ax2.set_xlabel('Probability')
+        ax2.set_ylabel('Density')
+        ax2.set_title('Probability Change After Test')
         ax2.legend()
         ax2.grid(True, alpha=0.3)
         ax2.set_xlim(0, 0.5)

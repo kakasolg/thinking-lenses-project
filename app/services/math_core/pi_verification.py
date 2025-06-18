@@ -44,7 +44,7 @@ class PiVerification:
         ax1.set_xlim(-1.1, 1.1)
         ax1.set_ylim(-1.1, 1.1)
         ax1.set_aspect('equal')
-        ax1.set_title(f'몬테카를로 시뮬레이션\nπ ~ {pi_estimate:.6f}', fontsize=12)
+        ax1.set_title(f'Monte Carlo Simulation\nπ ~ {pi_estimate:.6f}', fontsize=12)
         ax1.grid(True, alpha=0.3)
         
         # 수렴성 시각화
@@ -54,11 +54,11 @@ class PiVerification:
             pi_est = 4 * np.sum(inside_circle[:size]) / size
             pi_estimates.append(pi_est)
         
-        ax2.plot(sample_sizes, pi_estimates, 'b-', alpha=0.7, label='몬테카를로 추정')
-        ax2.axhline(y=pi, color='red', linestyle='--', label=f'실제 π = {pi:.6f}')
-        ax2.set_xlabel('샘플 수')
-        ax2.set_ylabel('π 추정값')
-        ax2.set_title('π 추정값 수렴성')
+        ax2.plot(sample_sizes, pi_estimates, 'b-', alpha=0.7, label='Monte Carlo Estimate')
+        ax2.axhline(y=pi, color='red', linestyle='--', label=f'Actual π = {pi:.6f}')
+        ax2.set_xlabel('Sample Size')
+        ax2.set_ylabel('π Estimate')
+        ax2.set_title('Convergence of π Estimate')
         ax2.grid(True, alpha=0.3)
         ax2.legend()
         
@@ -68,10 +68,10 @@ class PiVerification:
         # 2. 다양한 π 계산 방법들 비교
         methods = {
             'NumPy': np.pi,
-            '라이프니츠 급수': self._calculate_pi_leibniz(10000),
-            '마친 공식': self._calculate_pi_machin(100),
-            '몬테카를로': pi_estimate,
-            '월리스 곱': self._calculate_pi_wallis(10000)
+            'Leibniz Series': self._calculate_pi_leibniz(10000),
+            'Machin-like Formula': self._calculate_pi_machin(100),
+            'Monte Carlo': pi_estimate,
+            'Wallis Product': self._calculate_pi_wallis(10000)
         }
         
         print("\\n🔢 다양한 π 계산 방법 비교:")
@@ -88,17 +88,17 @@ class PiVerification:
         
         # 막대 그래프
         bars = ax1.bar(method_names, values, alpha=0.7, color=['blue', 'green', 'orange', 'red', 'purple'])
-        ax1.axhline(y=pi, color='black', linestyle='--', label=f'실제 π = {pi:.6f}')
-        ax1.set_ylabel('π 값')
-        ax1.set_title('π 계산 방법별 결과')
+        ax1.axhline(y=pi, color='black', linestyle='--', label=f'Actual π = {pi:.6f}')
+        ax1.set_ylabel('π Value')
+        ax1.set_title('Results by π Calculation Method')
         ax1.tick_params(axis='x', rotation=45)
         ax1.legend()
         ax1.grid(True, alpha=0.3)
         
         # 오차 그래프
         ax2.bar(method_names, errors, alpha=0.7, color=['blue', 'green', 'orange', 'red', 'purple'])
-        ax2.set_ylabel('절대 오차')
-        ax2.set_title('π 계산 방법별 오차')
+        ax2.set_ylabel('Absolute Error')
+        ax2.set_title('Error by π Calculation Method')
         ax2.tick_params(axis='x', rotation=45)
         ax2.set_yscale('log')
         ax2.grid(True, alpha=0.3)
@@ -109,9 +109,9 @@ class PiVerification:
         # 결과 저장
         self.results['pi'] = {
             'monte_carlo': pi_estimate,
-            'leibniz': methods['라이프니츠 급수'],
-            'machin': methods['마친 공식'],
-            'wallis': methods['월리스 곱'],
+            'leibniz': methods['Leibniz Series'],
+            'machin': methods['Machin-like Formula'],
+            'wallis': methods['Wallis Product'],
             'numpy': np.pi,
             'actual': pi
         }
