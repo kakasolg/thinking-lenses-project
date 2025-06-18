@@ -230,5 +230,5 @@ def register_verification_routes(app):
                      routes.verify_all, methods=['GET'])
     
     # 페이지 라우트
-    app.add_url_rule('/verification', 'verification_page', 
+    app.add_url_rule('/math/page/verification', 'verification_page', 
                      routes.verification_page, methods=['GET'])

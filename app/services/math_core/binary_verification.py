@@ -5,7 +5,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats
+from ...services.utils.config import configure_matplotlib
 from ..visualization.base64_encoder import save_plot_to_base64
+
+configure_matplotlib()
 
 class BinaryVerification:
     """이진법 관련 수학적 검증 클래스"""

@@ -1,0 +1,1141 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>주역 8괘 수학적 검증 시스템</title>
+    
+    <!-- LaTeX.css for academic styling -->
+    <link rel="stylesheet" href="https://latex.now.sh/style.css">
+    
+    <!-- KaTeX for mathematical expressions -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.css">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.0/dist/katex.min.js"></script>
+    
+    <!-- Font Awesome for icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
+    <!-- Chart.js for additional visualizations -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        /* 기본 레이아웃 */
+        body {
+            max-width: none;
+            margin: 0;
+            padding: 20px;
+            background: #fefefe;
+            font-family: 'Computer Modern', serif;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            padding: 40px;
+        }
+        
+        /* 헤더 스타일 */
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-bottom: 2rem;
+            border-bottom: 2px solid #333;
+        }
+        
+        .title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            font-style: italic;
+            margin-bottom: 2rem;
+        }
+        
+        /* 네비게이션 */
+        .nav-tabs {
+            display: flex;
+            border-bottom: 3px solid #333;
+            margin: 2rem 0;
+            overflow-x: auto;
+        }
+        
+        .nav-tab {
+            background: none;
+            border: none;
+            padding: 1rem 2rem;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            min-width: 150px;
+        }
+        
+        .nav-tab.active {
+            border-bottom-color: #333;
+            background: #f8f8f8;
+            font-weight: bold;
+        }
+        
+        .nav-tab:hover {
+            background: #f0f0f0;
+        }
+        
+        /* 콘텐츠 영역 */
+        .tab-content {
+            display: none;
+            margin-top: 2rem;
+            min-height: 600px;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* 로딩 스타일 */
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #333;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* 검증 결과 카드 */
+        .verification-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 2rem;
+            margin: 1rem 0;
+            background: #fafafa;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .verification-card h3 {
+            margin-top: 0;
+            color: #333;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 0.5rem;
+        }
+        
+        /* 그래프 컨테이너 */
+        .plot-container {
+            margin: 2rem 0;
+            text-align: center;
+            background: white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            padding: 1rem;
+        }
+        
+        .plot-image {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .plot-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        .plot-description {
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 1rem;
+            text-align: left;
+        }
+        
+        /* 통계 그리드 */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .stats-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stats-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        /* 대시보드 */
+        .dashboard-overview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin: 2rem 0;
+        }
+        
+        .concept-summary {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 1.5rem;
+        }
+        
+        .concept-symbol {
+            font-size: 3rem;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        
+        .concept-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+        
+        /* 버튼 스타일 */
+        .btn {
+            background: #333;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1rem;
+            margin: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            background: #555;
+            transform: translateY(-2px);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+        }
+        
+        .btn-info {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+        }
+        
+        /* 오류 및 성공 메시지 */
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin: 1rem 0;
+        }
+        
+        .alert-success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+        
+        .alert-error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+        
+        .alert-info {
+            background: #cce7f0;
+            border: 1px solid #b3d7ec;
+            color: #0c5460;
+        }
+        
+        /* 반응형 디자인 */
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                min-width: auto;
+                text-align: center;
+            }
+            
+            .dashboard-overview {
+                grid-template-columns: 1fr;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        /* 수식 스타일 */
+        .math-formula {
+            background: #f8f8f8;
+            border-left: 4px solid #333;
+            padding: 1rem;
+            margin: 1rem 0;
+            font-family: 'Times New Roman', serif;
+            border-radius: 0 4px 4px 0;
+        }
+        
+        /* 테이블 스타일 */
+        .results-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            background: white;
+        }
+        
+        .results-table th,
+        .results-table td {
+            border: 1px solid #ddd;
+            padding: 0.8rem;
+            text-align: left;
+        }
+        
+        .results-table th {
+            background: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .results-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="title">🔬 주역 8괘 수학적 검증 시스템</h1>
+            <p class="subtitle">Mathematical Verification of I-Ching Trigrams with Interactive Visualizations</p>
+            <div style="font-size: 1rem; color: #666;">
+                동양 철학과 현대 수학의 융합 연구 | 실시간 계산 및 시각화
+            </div>
+        </header>
+        
+        <!-- 대시보드 상태 -->
+        <div id="dashboardStatus" class="stats-grid">
+            <div class="stats-card">
+                <div class="stats-value" id="verificationCount">0</div>
+                <div class="stats-label">검증 완료</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-value" id="plotCount">0</div>
+                <div class="stats-label">생성된 그래프</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-value" id="accuracyRate">0%</div>
+                <div class="stats-label">평균 정확도</div>
+            </div>
+            <div class="stats-card">
+                <div class="stats-value" id="conceptCount">8</div>
+                <div class="stats-label">수학적 개념</div>
+            </div>
+        </div>
+        
+        <!-- 네비게이션 탭 -->
+        <nav class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">
+                <i class="fas fa-tachometer-alt"></i> 종합 대시보드
+            </button>
+            <button class="nav-tab" onclick="showTab('pi')">
+                <i class="fas fa-circle"></i> π 원주율
+            </button>
+            <button class="nav-tab" onclick="showTab('golden')">
+                <i class="fas fa-leaf"></i> φ 황금비
+            </button>
+            <button class="nav-tab" onclick="showTab('probability')">
+                <i class="fas fa-dice"></i> 확률론
+            </button>
+            <button class="nav-tab" onclick="showTab('calculus')">
+                <i class="fas fa-chart-line"></i> 미적분학
+            </button>
+            <button class="nav-tab" onclick="showTab('binary')">
+                <i class="fas fa-code"></i> 🟫 이진법
+            </button>
+            <button class="nav-tab" onclick="showTab('primes')">
+                <i class="fas fa-hashtag"></i> 🔢 소수
+            </button>
+            <button class="nav-tab" onclick="showTab('symmetry')">
+                <i class="fas fa-balance-scale"></i> ⚖️ 대칭성
+            </button>
+            <button class="nav-tab" onclick="showTab('e')">
+                <i class="fas fa-superscript"></i> 📈 자연상수 e
+            </button>
+            <button class="nav-tab" onclick="showTab('all')">
+                <i class="fas fa-globe"></i> 전체 검증
+            </button>
+        </nav>
+        
+        <!-- 탭 콘텐츠 -->
+        
+        <!-- 대시보드 탭 -->
+        <div id="dashboard" class="tab-content active">
+            <h2>📊 종합 대시보드</h2>
+            
+            <div class="verification-card">
+                <h3>시스템 개요</h3>
+                <p>본 시스템은 주역의 8괘를 현대 수학의 기초 개념에 매핑하여 실제 파이썬 코드로 검증하고 시각화합니다.</p>
+                
+                <div class="dashboard-overview">
+                    <div class="concept-summary">
+                        <div class="concept-symbol">☰</div>
+                        <div class="concept-name">건 - π (원주율)</div>
+                        <p>몬테카를로 시뮬레이션, 급수 계산 등 다양한 방법으로 π를 검증합니다.</p>
+                    </div>
+                    <div class="concept-summary">
+                        <div class="concept-symbol">☲</div>
+                        <div class="concept-name">리 - φ (황금비)</div>
+                        <p>피보나치 수열과 황금 사각형을 통해 황금비의 성질을 확인합니다.</p>
+                    </div>
+                    <div class="concept-summary">
+                        <div class="concept-symbol">☵</div>
+                        <div class="concept-name">감 - 확률론</div>
+                        <p>중심극한정리, 베이즈 정리 등 확률의 핵심 개념을 시각화합니다.</p>
+                    </div>
+                    <div class="concept-summary">
+                        <div class="concept-symbol">☳☴</div>
+                        <div class="concept-name">진손 - 미적분학</div>
+                        <p>미분과 적분의 기하학적 의미와 기본정리를 검증합니다.</p>
+                                                                </div>
+                    <div class="concept-summary">
+                        <div class="concept-symbol">☷</div>
+                        <div class="concept-name">곤 - 이진법</div>
+                        <p>비트 연산, 베르누이 시행, 논리 게이트를 통해 이진법 세계를 탐구합니다.</p>
+                    </div>
+                    <div class="concept-summary">
+                        <div class="concept-symbol">☶</div>
+                        <div class="concept-name">간 - 소수</div>
+                        <p>에라토스테네스의 체, 소수 정리, 메르센 소수를 검증합니다.</p>
+                    </div>
+                    <div class="concept-summary">
+                        <div class="concept-symbol">☱</div>
+                        <div class="concept-name">태 - 대칭성</div>
+                        <p>기하학적 변환, 분자 대칭, 점군 이론의 아름다운 세계를 시각화합니다.</p>
+                    </div>
+                    <div class="concept-summary">
+                        <div class="concept-symbol">📈</div>
+                        <div class="concept-name">자연상수 e</div>
+                        <p>급수 근사, 극한 정의, 연속 복리를 통해 자연상수 e를 탐구합니다.</p>
+                    </div>
+                </div>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                    <button class="btn btn-primary" onclick="loadDashboard()">
+                        <i class="fas fa-play"></i> 종합 검증 실행
+                    </button>
+                </div>
+                
+                <div id="dashboardResults"></div>
+            </div>
+        </div>
+        
+        <!-- π 검증 탭 -->
+        <div id="pi" class="tab-content">
+            <h2>🔵 건(☰): π 원주율 검증</h2>
+            
+            <div class="verification-card">
+                <h3>원주율 π의 다양한 계산 방법</h3>
+                <p>고대 그리스부터 현대에 이르기까지 수학자들이 개발한 π 계산 방법들을 비교 검증합니다.</p>
+                
+                <div class="math-formula">
+                    <strong>검증 방법들:</strong><br>
+                    • 몬테카를로 시뮬레이션: 단위원 내부 점의 비율<br>
+                    • 라이프니츠 급수: π/4 = 1 - 1/3 + 1/5 - 1/7 + ...<br>
+                    • 마친 공식: π/4 = 4arctan(1/5) - arctan(1/239)<br>
+                    • 월리스 곱: π/2 = ∏(4n²/(4n²-1))
+                </div>
+                
+                <button class="btn btn-info" onclick="loadPiVerification()">
+                    <i class="fas fa-calculator"></i> π 검증 시작
+                </button>
+                
+                <div id="piResults"></div>
+            </div>
+        </div>
+        
+        <!-- 황금비 검증 탭 -->
+        <div id="golden" class="tab-content">
+            <h2>🟡 리(☲): φ 황금비 검증</h2>
+            
+            <div class="verification-card">
+                <h3>황금비 φ의 신비로운 성질</h3>
+                <p>자연에서 발견되는 아름다운 비례, 황금비의 수학적 성질을 탐구합니다.</p>
+                
+                <div class="math-formula">
+                    <strong>황금비의 정의:</strong><br>
+                    φ = (1 + √5) / 2 ≈ 1.618033988...<br><br>
+                    <strong>특별한 성질:</strong><br>
+                    • φ² = φ + 1<br>
+                    • 1/φ = φ - 1<br>
+                    • 피보나치 비율의 극한: lim(F_{n+1}/F_n) = φ
+                </div>
+                
+                <button class="btn btn-info" onclick="loadGoldenRatioVerification()">
+                    <i class="fas fa-spiral"></i> 황금비 검증 시작
+                </button>
+                
+                <div id="goldenResults"></div>
+            </div>
+        </div>
+        
+        <!-- 확률 검증 탭 -->
+        <div id="probability" class="tab-content">
+            <h2>🎲 감(☵): 확률론 검증</h2>
+            
+            <div class="verification-card">
+                <h3>불확실성의 수학적 표현</h3>
+                <p>확률론의 핵심 개념들을 시각적으로 검증하고 실제 데이터로 확인합니다.</p>
+                
+                <div class="math-formula">
+                    <strong>검증 내용:</strong><br>
+                    • 중심극한정리: 표본 평균의 정규분포 수렴<br>
+                    • 다양한 확률분포의 특성 비교<br>
+                    • 베이즈 정리: P(A|B) = P(B|A)P(A) / P(B)<br>
+                    • 실제 데이터와 이론 분포의 비교
+                </div>
+                
+                <button class="btn btn-info" onclick="loadProbabilityVerification()">
+                    <i class="fas fa-chart-bar"></i> 확률 검증 시작
+                </button>
+                
+                <div id="probabilityResults"></div>
+            </div>
+        </div>
+        
+        <!-- 미적분 검증 탭 -->
+        <div id="calculus" class="tab-content">
+            <h2>📈 진(☳)손(☴): 미적분학 검증</h2>
+            
+            <div class="verification-card">
+                <h3>변화와 누적의 수학</h3>
+                <p>미분과 적분의 기하학적 의미를 시각화하고 미적분학의 기본정리를 검증합니다.</p>
+                
+                <div class="math-formula">
+                    <strong>미적분학의 기본정리:</strong><br>
+                    만약 F(x) = ∫ₐˣ f(t) dt 라면, F'(x) = f(x)<br><br>
+                    <strong>기하학적 의미:</strong><br>
+                    • 미분: 순간 변화율 (접선의 기울기)<br>
+                    • 적분: 곡선 아래 면적 (리만 합의 극한)
+                </div>
+                
+                <button class="btn btn-info" onclick="loadCalculusVerification()">
+                    <i class="fas fa-function"></i> 미적분 검증 시작
+                </button>
+                
+                <div id="calculusResults"></div>
+            </div>
+        </div>
+        
+        <!-- 이진법 검증 탭 -->
+        <div id="binary" class="tab-content">
+            <h2>🟫 곤(☷): 이진법 검증</h2>
+            
+            <div class="verification-card">
+                <h3>디지털 세계의 기초</h3>
+                <p>컴퓨터와 디지털 세계의 기초가 되는 이진법 체계를 탐구합니다.</p>
+                
+                <div class="math-formula">
+                    <strong>검증 내용:</strong><br>
+                    • 4비트 이진수 시각화 (2⁴ = 16가지 조합)<br>
+                    • 베르누이 시행과 이항분포<br>
+                    • 논리 게이트: AND, OR, XOR, NAND<br>
+                    • 이진 트리 구조 (3레벨)
+                </div>
+                
+                <button class="btn btn-info" onclick="loadBinaryVerification()">
+                    <i class="fas fa-microchip"></i> 이진법 검증 시작
+                </button>
+                
+                <div id="binaryResults"></div>
+            </div>
+        </div>
+        
+        <!-- 소수 검증 탭 -->
+        <div id="primes" class="tab-content">
+            <h2>🔢 간(☶): 소수 검증</h2>
+            
+            <div class="verification-card">
+                <h3>수학의 원자, 소수</h3>
+                <p>수학의 기본 구성 요소인 소수의 성질과 분포를 연구합니다.</p>
+                
+                <div class="math-formula">
+                    <strong>검증 내용:</strong><br>
+                    • 에라토스테네스의 체 (100이하 소수)<br>
+                    • 소수 정리: π(x) ≈ x/ln(x)<br>
+                    • 메르센 소수: 2ᵖ - 1 형태<br>
+                    • 소수 간격 분포 및 패턴
+                </div>
+                
+                <button class="btn btn-info" onclick="loadPrimesVerification()">
+                    <i class="fas fa-calculator"></i> 소수 검증 시작
+                </button>
+                
+                <div id="primesResults"></div>
+            </div>
+        </div>
+        
+        <!-- 대칭성 검증 탭 -->
+        <div id="symmetry" class="tab-content">
+            <h2>⚖️ 태(☱): 대칭성 검증</h2>
+            
+            <div class="verification-card">
+                <h3>자연과 예술의 규칙</h3>
+                <p>기하학과 물리학에서 나타나는 대칭성의 아름다운 패턴을 탐구합니다.</p>
+                
+                <div class="math-formula">
+                    <strong>검증 내용:</strong><br>
+                    • 기하학적 변환: 회전, 반사, 대칭<br>
+                    • 분자 대칭: H₂O의 C₂ᵥ 점군<br>
+                    • D₄ 점군: 정사각형의 8개 대칭 연산<br>
+                    • 변환 행렬의 행렬식과 불변량
+                </div>
+                
+                <button class="btn btn-info" onclick="loadSymmetryVerification()">
+                    <i class="fas fa-sync"></i> 대칭성 검증 시작
+                </button>
+                
+                <div id="symmetryResults"></div>
+            </div>
+        </div>
+        
+        <!-- 자연상수 e 검증 탭 -->
+        <div id="e" class="tab-content">
+            <h2>📈 자연상수 e 검증</h2>
+            
+            <div class="verification-card">
+                <h3>자연의 성장과 변화의 상수</h3>
+                <p>자연과 경제에서 나타나는 지수적 성장의 기초가 되는 자연상수 e를 탐구합니다.</p>
+                
+                <div class="math-formula">
+                    <strong>자연상수 e의 정의:</strong><br>
+                    e = lim(n→∞) (1 + 1/n)ⁿ ≈ 2.718281828...<br><br>
+                    <strong>검증 내용:</strong><br>
+                    • 급수 근사: e = Σ(1/n!)<br>
+                    • 극한 정의와 수렴성 비교<br>
+                    • 지수함수와 자연로그의 역함수 관계<br>
+                    • 연속 복리 vs 일반 복리 비교
+                </div>
+                
+                <button class="btn btn-info" onclick="loadEVerification()">
+                    <i class="fas fa-chart-area"></i> 자연상수 e 검증 시작
+                </button>
+                
+                <div id="eResults"></div>
+            </div>
+        </div>
+        <!-- 전체 검증 탭 -->
+        <div id="all" class="tab-content">
+            <h2>🌐 전체 수학적 검증</h2>
+            
+            <div class="verification-card">
+                <h3>8괘 수학 체계 종합 검증</h3>
+                <p>모든 수학적 개념을 한 번에 검증하고 결과를 종합적으로 분석합니다.</p>
+                
+                <div style="text-align: center; margin: 2rem 0;">
+                    <button class="btn btn-success" onclick="loadAllVerifications()">
+                        <i class="fas fa-rocket"></i> 전체 검증 실행 (시간 소요: 약 30초)
+                    </button>
+                </div>
+                
+                <div id="allResults"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        class VerificationApp {
+            constructor() {
+                this.currentTab = 'dashboard';
+                this.init();
+            }
+            
+            init() {
+                this.updateDashboardStatus();
+            }
+            
+            async updateDashboardStatus() {
+                // 기본 상태 표시
+                document.getElementById('verificationCount').textContent = '0';
+                document.getElementById('plotCount').textContent = '0';
+                document.getElementById('accuracyRate').textContent = '0%';
+            }
+            
+            showLoading(containerId) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = `
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        <p>수학적 검증을 수행하고 있습니다...</p>
+                        <p style="font-size: 0.9rem; color: #666;">
+                            복잡한 계산과 시각화 생성 중입니다. 잠시만 기다려주세요.
+                        </p>
+                    </div>
+                `;
+            }
+            
+            showError(containerId, error) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = `
+                    <div class="alert alert-error">
+                        <strong>오류 발생:</strong> ${error}
+                    </div>
+                `;
+            }
+            
+            showSuccess(containerId, message) {
+                const container = document.getElementById(containerId);
+                container.innerHTML = `
+                    <div class="alert alert-success">
+                        <strong>성공:</strong> ${message}
+                    </div>
+                `;
+            }
+            
+            async loadDashboard() {
+                this.showLoading('dashboardResults');
+                
+                try {
+                    const response = await fetch('/math/api/verification/dashboard');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderDashboardResults(data);
+                        this.updateDashboardStatus(data);
+                    } else {
+                        this.showError('dashboardResults', data.error);
+                    }
+                } catch (error) {
+                    this.showError('dashboardResults', '네트워크 오류가 발생했습니다.');
+                }
+            }
+            
+            renderDashboardResults(data) {
+                const container = document.getElementById('dashboardResults');
+                
+                let html = `
+                    <div class="alert alert-success">
+                        <strong>검증 완료!</strong> ${data.verification_count}개 개념, ${data.plot_count}개 그래프 생성
+                    </div>
+                `;
+                
+                if (data.dashboard_plot) {
+                    html += `
+                        <div class="plot-container">
+                            <div class="plot-title">8괘 수학적 검증 종합 결과</div>
+                            <img src="data:image/png;base64,${data.dashboard_plot}" 
+                                 alt="종합 대시보드" class="plot-image">
+                            <div class="plot-description">
+                                각 괘별 수학적 개념의 검증 정확도와 8괘의 원형 배치를 보여줍니다.
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                if (data.summary && data.summary.length > 0) {
+                    html += `
+                        <h4>검증 결과 요약</h4>
+                        <table class="results-table">
+                            <thead>
+                                <tr>
+                                    <th>괘</th>
+                                    <th>수학적 개념</th>
+                                    <th>검증값</th>
+                                    <th>실제값</th>
+                                    <th>오차</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+                    
+                    data.summary.forEach(item => {
+                        html += `
+                            <tr>
+                                <td>${item.괘}</td>
+                                <td>${item.개념}</td>
+                                <td>${item.검증값}</td>
+                                <td>${item.실제값}</td>
+                                <td>${item.오차}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    html += `
+                            </tbody>
+                        </table>
+                    `;
+                }
+                
+                container.innerHTML = html;
+            }
+            
+            async loadPiVerification() {
+                this.showLoading('piResults');
+                
+                try {
+                    const response = await fetch('/math/api/verification/pi');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderVerificationResults('piResults', data);
+                    } else {
+                        this.showError('piResults', data.error);
+                    }
+                } catch (error) {
+                    this.showError('piResults', '네트워크 오류가 발생했습니다.');
+                }
+            }
+            
+            async loadGoldenRatioVerification() {
+                this.showLoading('goldenResults');
+                
+                try {
+                    const response = await fetch('/math/api/verification/golden-ratio');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderVerificationResults('goldenResults', data);
+                    } else {
+                        this.showError('goldenResults', data.error);
+                    }
+                } catch (error) {
+                    this.showError('goldenResults', '네트워크 오류가 발생했습니다.');
+                }
+            }
+            
+            async loadProbabilityVerification() {
+                this.showLoading('probabilityResults');
+                
+                try {
+                    const response = await fetch('/math/api/verification/probability');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderVerificationResults('probabilityResults', data);
+                    } else {
+                        this.showError('probabilityResults', data.error);
+                    }
+                } catch (error) {
+                    this.showError('probabilityResults', '네트워크 오류가 발생했습니다.');
+                }
+            }
+            
+            async loadCalculusVerification() {
+                this.showLoading('calculusResults');
+                
+                try {
+                    const response = await fetch('/math/api/verification/calculus');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderVerificationResults('calculusResults', data);
+                    } else {
+                        this.showError('calculusResults', data.error);
+                    }
+                } catch (error) {
+                    this.showError('calculusResults', '네트워크 오류가 발생했습니다.');
+                }
+            }
+            
+            async loadBinaryVerification() {
+                this.showLoading('binaryResults');
+                
+                try {
+                    const response = await fetch('/math/api/verification/binary');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderVerificationResults('binaryResults', data);
+                    } else {
+                        this.showError('binaryResults', data.error);
+                    }
+                } catch (error) {
+                    this.showError('binaryResults', '네트워크 오류가 발생했습니다.');
+                }
+            }
+            
+            async loadPrimesVerification() {
+                this.showLoading('primesResults');
+                
+                try {
+                    const response = await fetch('/math/api/verification/primes');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderVerificationResults('primesResults', data);
+                    } else {
+                        this.showError('primesResults', data.error);
+                    }
+                } catch (error) {
+                    this.showError('primesResults', '네트워크 오류가 발생했습니다.');
+                }
+            }
+            
+            async loadSymmetryVerification() {
+                this.showLoading('symmetryResults');
+                
+                try {
+                    const response = await fetch('/math/api/verification/symmetry');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderVerificationResults('symmetryResults', data);
+                    } else {
+                        this.showError('symmetryResults', data.error);
+                    }
+                } catch (error) {
+                    this.showError('symmetryResults', '네트워크 오류가 발생했습니다.');
+                }
+            }
+            
+            async loadEVerification() {
+                this.showLoading('eResults');
+                
+                try {
+                    const response = await fetch('/math/api/verification/e');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderVerificationResults('eResults', data);
+                    } else {
+                        this.showError('eResults', data.error);
+                    }
+                } catch (error) {
+                    this.showError('eResults', '네트워크 오류가 발생했습니다.');
+                }
+            }
+            
+            async loadAllVerifications() {
+                this.showLoading('allResults');
+                
+                try {
+                    const response = await fetch('/math/api/verification/all');
+                    const data = await response.json();
+                    
+                    if (data.success) {
+                        this.renderAllResults(data);
+                        this.updateDashboardStatus(data);
+                    } else {
+                        this.showError('allResults', data.error);
+                    }
+                } catch (error) {
+                    this.showError('allResults', '네트워크 오류가 발생했습니다.');
+                }
+            }
+            
+            renderVerificationResults(containerId, data) {
+                const container = document.getElementById(containerId);
+                
+                let html = `
+                    <div class="alert alert-success">
+                        <strong>${data.concept} 검증 완료!</strong> ${data.description}
+                    </div>
+                `;
+                
+                // 그래프들 표시
+                if (data.plots) {
+                    Object.entries(data.plots).forEach(([plotName, plotData]) => {
+                        const plotTitle = this.getPlotTitle(plotName);
+                        html += `
+                            <div class="plot-container">
+                                <div class="plot-title">${plotTitle}</div>
+                                <img src="data:image/png;base64,${plotData}" 
+                                     alt="${plotTitle}" class="plot-image">
+                            </div>
+                        `;
+                    });
+                }
+                
+                // 수치 결과 표시
+                if (data.result) {
+                    html += `<div class="math-formula">`;
+                    Object.entries(data.result).forEach(([key, value]) => {
+                        if (typeof value === 'number') {
+                            html += `<strong>${key}:</strong> ${value.toFixed(6)}<br>`;
+                        } else if (typeof value === 'object' && !Array.isArray(value)) {
+                            html += `<strong>${key}:</strong><br>`;
+                            Object.entries(value).forEach(([subkey, subvalue]) => {
+                                if (typeof subvalue === 'number') {
+                                    html += `&nbsp;&nbsp;${subkey}: ${subvalue.toFixed(6)}<br>`;
+                                } else {
+                                    html += `&nbsp;&nbsp;${subkey}: ${subvalue}<br>`;
+                                }
+                            });
+                        } else {
+                            html += `<strong>${key}:</strong> ${value}<br>`;
+                        }
+                    });
+                    html += `</div>`;
+                }
+                
+                container.innerHTML = html;
+            }
+            
+            renderAllResults(data) {
+                const container = document.getElementById('allResults');
+                
+                let html = `
+                    <div class="alert alert-success">
+                        <strong>전체 검증 완료!</strong> 총 ${Object.keys(data.results).length}개 개념을 성공적으로 검증했습니다.
+                    </div>
+                `;
+                
+                Object.entries(data.results).forEach(([concept, result]) => {
+                    html += `
+                        <div class="verification-card">
+                            <h3>${result.concept}</h3>
+                            <p>${result.description}</p>
+                    `;
+                    
+                    if (result.plots) {
+                        Object.entries(result.plots).forEach(([plotName, plotData]) => {
+                            const plotTitle = this.getPlotTitle(plotName);
+                            html += `
+                                <div class="plot-container">
+                                    <div class="plot-title">${plotTitle}</div>
+                                    <img src="data:image/png;base64,${plotData}" 
+                                         alt="${plotTitle}" class="plot-image">
+                                </div>
+                            `;
+                        });
+                    }
+                    
+                    if (result.result) {
+                        html += `<div class="math-formula">`;
+                        Object.entries(result.result).forEach(([key, value]) => {
+                            if (typeof value === 'number') {
+                                html += `<strong>${key}:</strong> ${value.toFixed(6)}<br>`;
+                            } else {
+                                html += `<strong>${key}:</strong> ${JSON.stringify(value)}<br>`;
+                            }
+                        });
+                        html += `</div>`;
+                    }
+                    
+                    html += `</div>`;
+                });
+                
+                container.innerHTML = html;
+            }
+            
+            getPlotTitle(plotName) {
+                const titles = {
+                    // Pi
+                    'pi_monte_carlo': 'π 검증: 몬테카를로 시뮬레이션',
+                    'pi_series_convergence': 'π 검증: 급수 수렴 비교',
+                    
+                    // Golden Ratio
+                    'golden_ratio_fibonacci': 'φ 검증: 피보나치 수열 비율',
+                    'golden_rectangle_spiral': 'φ 검증: 황금 사각형과 나선',
+                    
+                    // Probability
+                    'central_limit_theorem': '확률론: 중심극한정리',
+                    'distribution_comparison': '확률론: 주요 확률분포 비교',
+                    
+                    // Calculus
+                    'derivative_visualization': '미적분: 도함수 시각화',
+                    'integral_visualization': '미적분: 정적분 시각화',
+                    
+                    // Binary
+                    'binary_representation': '이진법: 4비트 표현',
+                    'logic_gate_outputs': '이진법: 논리 게이트 출력',
+                    
+                    // Primes
+                    'sieve_of_eratosthenes': '소수: 에라토스테네스의 체',
+                    'prime_number_theorem': '소수: 소수 정리 (π(x) vs x/ln(x))',
+                    
+                    // Symmetry
+                    'd4_group_cayley_graph': '대칭성: D₄ 점군 케일리 그래프',
+                    'geometric_transformations': '대칭성: 기하학적 변환',
+                    
+                    // e
+                    'e_series_convergence': '자연상수 e: 급수 수렴 과정',
+                    'e_limit_convergence': '자연상수 e: 극한 수렴 과정'
+                };
+                return titles[plotName] || plotName.replace(/_/g, ' ').toUpperCase();
+            }
+        }
+        
+        // 탭 전환 함수
+        function showTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            const navs = document.querySelectorAll('.nav-tab');
+            navs.forEach(nav => {
+                nav.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            document.querySelector(`.nav-tab[onclick="showTab('${tabName}')"]`).classList.add('active');
+            
+            // KaTeX 렌더링
+            renderMathInElement(document.getElementById(tabName), {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ]
+            });
+        }
+        
+        // 앱 인스턴스 생성 및 이벤트 리스너 등록
+        const app = new VerificationApp();
+        
+        // 각 버튼에 대한 이벤트 리스너를 동적으로 할당
+        document.querySelector('button[onclick="loadDashboard()"]').addEventListener('click', () => app.loadDashboard());
+        document.querySelector('button[onclick="loadPiVerification()"]').addEventListener('click', () => app.loadPiVerification());
+        document.querySelector('button[onclick="loadGoldenRatioVerification()"]').addEventListener('click', () => app.loadGoldenRatioVerification());
+        document.querySelector('button[onclick="loadProbabilityVerification()"]').addEventListener('click', () => app.loadProbabilityVerification());
+        document.querySelector('button[onclick="loadCalculusVerification()"]').addEventListener('click', () => app.loadCalculusVerification());
+        document.querySelector('button[onclick="loadBinaryVerification()"]').addEventListener('click', () => app.loadBinaryVerification());
+        document.querySelector('button[onclick="loadPrimesVerification()"]').addEventListener('click', () => app.loadPrimesVerification());
+        document.querySelector('button[onclick="loadSymmetryVerification()"]').addEventListener('click', () => app.loadSymmetryVerification());
+        document.querySelector('button[onclick="loadEVerification()"]').addEventListener('click', () => app.loadEVerification());
+        document.querySelector('button[onclick="loadAllVerifications()"]').addEventListener('click', () => app.loadAllVerifications());
+        
+        // 초기 탭 로드
+        showTab('dashboard');
+    </script>
+</body>
+</html>

@@ -1,43 +1,47 @@
 """
-태(☱): 대칭성 검증 및 시각화 모듈
+태(☱): Symmetry Verification and Visualization Module
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
+from ...services.utils.config import configure_matplotlib
+
+configure_matplotlib()
+
 from ..visualization.base64_encoder import save_plot_to_base64
 
 class SymmetryVerification:
-    """대칭성 관련 수학적 검증 클래스"""
+    """Mathematical verification class for symmetry"""
     
     def create_rotation_matrix(self, angle):
-        """회전 변환 행렬 생성"""
+        """Create a rotation transformation matrix"""
         cos_a, sin_a = np.cos(angle), np.sin(angle)
         return np.array([[cos_a, -sin_a], [sin_a, cos_a]])
     
     def create_reflection_matrix(self, axis='x'):
-        """반사 변환 행렬 생성"""
+        """Create a reflection transformation matrix"""
         if axis == 'x':
             return np.array([[1, 0], [0, -1]])
         elif axis == 'y':
             return np.array([[-1, 0], [0, 1]])
-        elif axis == 'xy':  # y=x 축
+        elif axis == 'xy':  # y=x axis
             return np.array([[0, 1], [1, 0]])
         else:
             return np.eye(2)
     
     def verify_symmetry_with_visualization(self):
-        """태(☱): 대칭성 검증 및 시각화"""
+        """Tae (☱): Symmetry verification and visualization"""
         print("\n" + "=" * 50)
-        print("⚖️ 태(☱): 대칭성 검증 및 시각화")
+        print("⚖️ Tae (☱): Symmetry Verification & Visualization")
         print("=" * 50)
         
-        # 1. 기하학적 대칭 변환
+        # 1. Geometric Symmetry Transformations
         fig, ((ax1, ax2), (ax3, ax4)) = plt.subplots(2, 2, figsize=(15, 12))
         
-        # 원본 도형 (삼각형)
+        # Original shape (triangle)
         triangle = np.array([[0, 1, 0.5, 0], [0, 0, 0.8, 0]])
         
-        # 회전 변환들
+        # Rotation transformations
         colors = ['red', 'blue', 'green', 'orange', 'purple']
         angles = [0, np.pi/4, np.pi/2, 3*np.pi/4, np.pi]
         
@@ -52,18 +56,18 @@ class SymmetryVerification:
         ax1.set_aspect('equal')
         ax1.grid(True, alpha=0.3)
         ax1.legend()
-        ax1.set_title('회전 대칭 (삼각형)')
+        ax1.set_title('Rotational Symmetry (Triangle)')
         
-        # 2. 반사 대칭
+        # 2. Reflection Symmetry
         original = np.array([[0, 1, 0.5, 0], [0, 0, 0.8, 0]])
         
-        # 다양한 축에 대한 반사
+        # Reflections across various axes
         reflections = ['x', 'y', 'xy']
-        reflection_names = ['x축 반사', 'y축 반사', 'y=x 반사']
+        reflection_names = ['x-axis reflection', 'y-axis reflection', 'y=x reflection']
         colors_ref = ['red', 'blue', 'green', 'purple']
         
         ax2.plot(original[0], original[1], 'o-', color='black', 
-                linewidth=3, markersize=6, label='원본')
+                linewidth=3, markersize=6, label='Original')
         
         for i, axis in enumerate(reflections):
             R = self.create_reflection_matrix(axis)
@@ -76,25 +80,25 @@ class SymmetryVerification:
         ax2.set_aspect('equal')
         ax2.grid(True, alpha=0.3)
         ax2.legend()
-        ax2.set_title('반사 대칭')
+        ax2.set_title('Reflection Symmetry')
         
-        # 3. 분자 대칭 (점군)
-        # 물 분자 (C2v 점군) 시뮬레이션
-        # O원자: (0, 0), H원자들: (±0.8, 0.6)
+        # 3. Molecular Symmetry (Point Group)
+        # Water molecule (C2v point group) simulation
+        # O atom: (0, 0), H atoms: (±0.8, 0.6)
         O_pos = np.array([0, 0])
         H1_pos = np.array([-0.8, 0.6])
         H2_pos = np.array([0.8, 0.6])
         
-        # 원본 분자
+        # Original molecule
         ax3.scatter(*O_pos, s=200, c='red', label='O', marker='o')
         ax3.scatter(*H1_pos, s=100, c='blue', label='H₁', marker='o')
         ax3.scatter(*H2_pos, s=100, c='blue', label='H₂', marker='o')
         
-        # 결합선
+        # Bonds
         ax3.plot([O_pos[0], H1_pos[0]], [O_pos[1], H1_pos[1]], 'k-', linewidth=2)
         ax3.plot([O_pos[0], H2_pos[0]], [O_pos[1], H2_pos[1]], 'k-', linewidth=2)
         
-        # y축 반사 (C2v 대칭의 σv)
+        # y-axis reflection (σv in C2v symmetry)
         H1_reflected = self.create_reflection_matrix('y') @ H1_pos
         H2_reflected = self.create_reflection_matrix('y') @ H2_pos
         
@@ -110,67 +114,67 @@ class SymmetryVerification:
         ax3.set_aspect('equal')
         ax3.grid(True, alpha=0.3)
         ax3.legend()
-        ax3.set_title('분자 대칭 (H₂O, C₂ᵥ 점군)')
+        ax3.set_title('Molecular Symmetry (H₂O, C₂ᵥ Point Group)')
         
-        # 4. 군론적 대칭성 (D4 군)
-        # 정사각형의 대칭 연산들
+        # 4. Group Theory Symmetry (D4 Group)
+        # Symmetry operations of a square
         square = np.array([[-1, 1, 1, -1, -1], [-1, -1, 1, 1, -1]])
         
-        # D4 군의 8개 원소: {e, r, r², r³, s, sr, sr², sr³}
+        # 8 elements of D4 group: {e, r, r², r³, s, sr, sr², sr³}
         operations = []
         
-        # 회전 (90도씩)
+        # Rotations (by 90 degrees)
         for i in range(4):
             R = self.create_rotation_matrix(i * np.pi/2)
             operations.append(('rotation', i*90, R @ square))
         
-        # 반사 (대각선)
+        # Reflection (diagonal)
         diag_reflection = np.array([[0, 1], [1, 0]])
         operations.append(('reflection', 'diagonal', diag_reflection @ square))
         
-        # 여러 대칭 연산 결과 표시
+        # Display results of several symmetry operations
         for i, (op_type, angle, transformed) in enumerate(operations[:5]):
             alpha = 1.0 - i * 0.15
             if op_type == 'rotation':
                 ax4.plot(transformed[0], transformed[1], 'o-', 
                         alpha=alpha, linewidth=2, markersize=3,
-                        label=f'회전 {angle}°')
+                        label=f'Rotation {angle}°')
             else:
                 ax4.plot(transformed[0], transformed[1], 's--', 
                         alpha=alpha, linewidth=2, markersize=3,
-                        label=f'{angle} 반사')
+                        label=f'{angle} reflection')
         
         ax4.set_xlim(-1.5, 1.5)
         ax4.set_ylim(-1.5, 1.5)
         ax4.set_aspect('equal')
         ax4.grid(True, alpha=0.3)
         ax4.legend()
-        ax4.set_title('정사각형의 D₄ 점군 대칭')
+        ax4.set_title('D₄ Point Group Symmetry of a Square')
         
         plt.tight_layout()
         plot1_base64 = save_plot_to_base64(fig)
         
-        # 검증 결과 계산
+        # Calculate verification results
         results = {
             'rotation_symmetry': {
-                '정n각형의 회전 대칭': 'n개',
-                '원의 회전 대칭': '무한개',
-                '정사각형 회전각': [0, 90, 180, 270]
+                'Rotational Symmetries of n-gon': 'n',
+                'Rotational Symmetries of Circle': 'Infinite',
+                'Square Rotation Angles': [0, 90, 180, 270]
             },
             'reflection_symmetry': {
-                '정사각형 반사축': 4,
-                '이등변삼각형 반사축': 1,
-                '원의 반사축': '무한개'
+                'Square Reflection Axes': 4,
+                'Isosceles Triangle Reflection Axes': 1,
+                'Circle Reflection Axes': 'Infinite'
             },
             'point_groups': {
-                'H2O 점군': 'C₂ᵥ',
-                'CH4 점군': 'Tₐ',
-                '정사각형 점군': 'D₄'
+                'H2O Point Group': 'C₂ᵥ',
+                'CH4 Point Group': 'Tₐ',
+                'Square Point Group': 'D₄'
             },
             'transformation_matrices': {
-                '90도 회전 행렬 det': np.linalg.det(self.create_rotation_matrix(np.pi/2)),
-                'x축 반사 행렬 det': np.linalg.det(self.create_reflection_matrix('x')),
-                '변환 보존성': '거리와 각도 보존'
+                'Determinant of 90-deg Rotation Matrix': np.linalg.det(self.create_rotation_matrix(np.pi/2)),
+                'Determinant of x-axis Reflection Matrix': np.linalg.det(self.create_reflection_matrix('x')),
+                'Transformation Invariance': 'Preserves distance and angles'
             }
         }
         
@@ -178,9 +182,9 @@ class SymmetryVerification:
             'symmetry_analysis': plot1_base64
         }
         
-        print(f"📊 대칭성 검증 완료:")
-        print(f"   회전 변환 행렬식: {results['transformation_matrices']['90도 회전 행렬 det']:.0f}")
-        print(f"   반사 변환 행렬식: {results['transformation_matrices']['x축 반사 행렬 det']:.0f}")
-        print(f"   H₂O 점군: {results['point_groups']['H2O 점군']}")
+        print(f"📊 Symmetry verification complete:")
+        print(f"   Determinant of rotation matrix: {results['transformation_matrices']['Determinant of 90-deg Rotation Matrix']:.0f}")
+        print(f"   Determinant of reflection matrix: {results['transformation_matrices']['Determinant of x-axis Reflection Matrix']:.0f}")
+        print(f"   H₂O Point Group: {results['point_groups']['H2O Point Group']}")
         
         return results, plots

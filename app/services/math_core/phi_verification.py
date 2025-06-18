@@ -5,8 +5,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from math import sqrt
+from ...services.utils.config import configure_matplotlib
 from ..utils.config import MATH_CONSTANTS, PLOT_CONFIG
 from ..visualization.base64_encoder import save_plot_to_base64
+
+configure_matplotlib()
 
 class PhiVerification:
     """황금비 φ 검증 클래스"""

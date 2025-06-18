@@ -8,6 +8,9 @@ import scipy.stats
 from math import sqrt
 from ..utils.config import MATH_CONSTANTS, PLOT_CONFIG
 from ..visualization.base64_encoder import save_plot_to_base64
+from ...services.utils.config import configure_matplotlib
+
+configure_matplotlib()
 
 class ProbabilityVerification:
     """확률론 검증 클래스"""

@@ -7,6 +7,9 @@ import matplotlib.pyplot as plt
 from math import pi, atan
 from ..utils.config import MATH_CONSTANTS, PLOT_CONFIG
 from ..visualization.base64_encoder import save_plot_to_base64
+from ...services.utils.config import configure_matplotlib
+
+configure_matplotlib()
 
 class PiVerification:
     """원주율 π 검증 클래스"""
